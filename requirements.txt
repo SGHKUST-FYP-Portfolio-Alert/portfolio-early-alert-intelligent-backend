@@ -1,3 +1,4 @@
 motor
 pymongo[srv]
 uvicorn
+finnhub-python
