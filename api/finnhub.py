@@ -24,7 +24,7 @@ def fetch_historical_stock_news(symbol):
             datetime.utcfromtimestamp(news[-1]['datetime']).date()
         )
     
-    news_df = pd.DataFrame(news).drop_duplicates()
+    news_df = pd.DataFrame(news).drop_duplicates(subset=['headline', 'headline', 'source'])
 
     return news_df
 
