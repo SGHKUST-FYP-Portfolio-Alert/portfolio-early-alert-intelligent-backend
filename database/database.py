@@ -29,3 +29,9 @@ async def add_news(news_datum: List[dict]):
 
     await news_collection.write_bulk(operations)
     return
+
+async def get_news(filter, limit=None):
+    return await news_collection\
+        .find(filter)\
+        .to_list(limit)
+
