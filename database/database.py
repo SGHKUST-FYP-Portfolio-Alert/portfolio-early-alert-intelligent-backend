@@ -8,15 +8,24 @@ client = motor.motor_asyncio.AsyncIOMotorClient(
 
 database = client['portfolio_alert']
 
-
+counterparty_collection = database.get_collection('counterparty')
 news_collection = database.get_collection('news')
 
+async def add_counterparty(counterparty: dict):
+    await counterparty_collection\
+        .replace_one(counterparty, counterparty, upsert=True) #upsert operation
+    
+    return
 
-async def add_news(news_data: List[dict]):
+async def get_counterparties():
+    return await counterparty_collection.find().to_list(None)
+
+
+async def add_news(news_datum: List[dict]):
     operations = [ 
-        ReplaceOne(news_datum, news_datum, upsert=True) 
-        for news_datum in news_data 
-    ]
+        ReplaceOne(news_data, news_data, upsert=True) #Upsert operation
+        for news_data in news_datum
+    ]  
 
     await news_collection.write_bulk(operations)
     return
