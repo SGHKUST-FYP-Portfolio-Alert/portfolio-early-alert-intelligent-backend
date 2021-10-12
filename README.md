@@ -1,4 +1,5 @@
 python -m pip install -r requirements.txt
+python run.py
 
 ### Implementation Goal ###
 store the fetched news to mongodb
