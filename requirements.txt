@@ -3,3 +3,7 @@ pymongo[srv]
 uvicorn
 finnhub-python
 apscheduler
+pandas
+pytorch_pretrained_bert
+DateTime
+torch
