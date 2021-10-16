@@ -7,12 +7,12 @@ from typing import List
 router = APIRouter()
 
 @router.get("/", response_model=List[Counterparty])
-async def get_counterparties():
-    return await db.get_counterparties()
+def get_counterparties():
+    return list(db.get_counterparties())
 
 
 @router.post("/")
-async def add_counterparty(counterparty: CounterpartyCreate):
+def add_counterparty(counterparty: CounterpartyCreate):
     counterparty = jsonable_encoder(counterparty)
-    await db.add_counterparty(counterparty)
+    return db.add_counterparty(counterparty)
 

@@ -35,8 +35,8 @@ def fetch_historical_stock_news(symbol):
 
 def fetch_1day_stock_news(symbol):
 
-    start_date = datetime.utcnow.date() - timedelta(days=1) #yesterday
-    end_date = datetime.utcnow.date()   #today
+    start_date = datetime.utcnow().date() - timedelta(days=1) #yesterday
+    end_date = datetime.utcnow().date()   #today
 
     news = finnhub_client.company_news(symbol, _from=start_date.isoformat(), to=end_date.isoformat())
 

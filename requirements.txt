@@ -3,3 +3,4 @@ pymongo[srv]
 uvicorn
 finnhub-python
 apscheduler
+pandas
