@@ -31,7 +31,6 @@ def add_news(news_datum: List[dict]):
     return
 
 def update_news(news_datum: List[dict]):
-
     # [{"_id": XXX, "sentiment": "positive"}, {"_id": XXX, "sentiment": "negative"}]
     operations = [
         UpdateOne(
