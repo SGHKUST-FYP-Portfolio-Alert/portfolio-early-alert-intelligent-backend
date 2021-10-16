@@ -27,7 +27,7 @@ async def add_news(news_datum: List[dict]):
         for news_data in news_datum
     ]  
 
-    await news_collection.write_bulk(operations)
+    await news_collection.bulk_write(operations)
     return
 
 async def get_news(filter, limit=None):

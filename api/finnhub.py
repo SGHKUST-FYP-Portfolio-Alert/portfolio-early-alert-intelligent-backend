@@ -24,9 +24,14 @@ def fetch_historical_stock_news(symbol):
             datetime.utcfromtimestamp(news[-1]['datetime']).date()
         )
     
-    news_df = pd.DataFrame(news).drop_duplicates(subset=['headline', 'headline', 'source'])
+    news_df = pd.DataFrame(news).drop_duplicates(subset=['datetime', 'headline', 'source'])
+    news_df['api'] = 'Finnhub'
+    news_df['counterparty'] = symbol
 
-    return news_df
+    news_df\
+        .drop(columns=['category', 'id', 'related'], inplace=True)
+
+    return news_df.to_dict('records')
 
 def fetch_1day_stock_news(symbol):
 
@@ -35,4 +40,12 @@ def fetch_1day_stock_news(symbol):
 
     news = finnhub_client.company_news(symbol, _from=start_date.isoformat(), to=end_date.isoformat())
 
-    return pd.DataFrame(news)
+    news_df = pd.DataFrame(news).drop_duplicates(subset=['datetime', 'headline', 'source'])
+    news_df['api'] = 'Finnhub'
+
+    news_df['counterparty'] = symbol
+
+    news_df\
+        .drop(columns=['category', 'id', 'related'], inplace=True)
+
+    return news_df.to_dict('records')
