@@ -8,3 +8,4 @@ pytorch-pretrained-bert
 torch
 tqdm
 time
+coloredlogs

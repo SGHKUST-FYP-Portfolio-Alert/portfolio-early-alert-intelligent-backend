@@ -1,4 +1,4 @@
-from api import finnhub
+from ext_api import finnhub_wrapper
 from database import database as db
 from models.modelInfer import modelInfer
 import models.config as modelConfig
@@ -7,14 +7,16 @@ import datetime
 
 def daily_update_cron():
     print("daily update in progress")
+
     for counterparty in db.get_counterparties():
         if not db.news_collection.find_one({'counterparty': counterparty['symbol'] or counterparty['name']}):
-            news = finnhub.fetch_historical_stock_news(counterparty['symbol'] or counterparty['name'])
-            db.add_news(news)
+            news = finnhub_wrapper.fetch_historical_stock_news(counterparty['symbol'] or counterparty['name'])
         else:
-            news = finnhub.fetch_1day_stock_news(counterparty['symbol'] or counterparty['name'])
-            db.add_news(news)
+            news = finnhub_wrapper.fetch_1day_stock_news(counterparty['symbol'] or counterparty['name'])
+    db.add_news(news)        
+
     update_sentiment()
+
     print("daily update completed")
     
 def update_sentiment():
@@ -27,6 +29,3 @@ def update_sentiment():
     myModel = modelInfer(news_no_sentiment,modelConfig)
     infered_result = myModel.infer()
     db.update_news(infered_result)
-
-
-
