@@ -7,3 +7,5 @@ pandas
 pytorch_pretrained_bert
 DateTime
 torch
+tqdm
+time

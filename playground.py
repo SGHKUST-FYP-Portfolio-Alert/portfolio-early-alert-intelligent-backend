@@ -7,7 +7,12 @@ import datetime
 import torch
 import torch.nn.functional as F
 import time
-
+from tqdm import tqdm
+from models.modelInfer import modelInfer
+import models.config as modelConfig
+from typing import List
+from cron import update_sentiment
+   
 def main():
     infer_start_time = time.time()
     labels = {0:'neutral', 1:'positive',2:'negative'}
@@ -28,12 +33,11 @@ def main():
     filter = {"datetime":{"$gte":unix_start_dt,"$lt":unix_end_dt}}
     news = list(db.get_news(filter))
     id_loop = [data['_id'] for data in news]
-    print(id_loop)
     sentences = [data['headline'] for data in news]
     tokenizer = BertTokenizer(vocab_file = vocab_path, do_lower_case = True, do_basic_tokenize = True)
     model.eval()
     result_list = []
-    for id, sent in zip(id_loop,sentences): 
+    for id, sent in tqdm(zip(id_loop,sentences),total=len(id_loop)): 
         tokenized_sent = tokenizer.tokenize(sent)
         if len(tokenized_sent) > max_seq_length:
             tokenized_sent = tokenized_sent[:max_seq_length]
@@ -59,9 +63,9 @@ def main():
             elif labels[torch.argmax(outputs).item()]=="negative":
                 sentiment_score = -1
             result_list.append({"_id":id, "sentiment":sentiment_score})
-        print(sent)
-    print(result_list)
     print(f"Time used: {time.time()-infer_start_time}")
     db.update_news(result_list)
+
+
 if __name__ == '__main__':
-    main()
+    update_sentiment()
