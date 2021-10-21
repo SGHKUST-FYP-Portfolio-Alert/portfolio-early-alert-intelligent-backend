@@ -43,6 +43,6 @@ def update_news(news_datum: List[dict]):
     news_collection.bulk_write(operations)
     return
 
-def get_news(filter, limit=None):
+def get_news(filter):
     return news_collection\
-        .find(filter, limit=limit)
+        .find(filter)
