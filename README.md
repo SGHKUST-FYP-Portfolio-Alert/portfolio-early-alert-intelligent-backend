@@ -1,3 +1,5 @@
+python version 3.8.x
+
 python -m pip install -r requirements.txt
 python run.py
 
