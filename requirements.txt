@@ -4,8 +4,7 @@ uvicorn
 finnhub-python
 apscheduler
 pandas
-pytorch_pretrained_bert
-DateTime
+pytorch-pretrained-bert
 torch
 tqdm
 time
