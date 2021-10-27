@@ -3,8 +3,21 @@ from cron import daily_update_cron
 from routes.counterparty import router as CounterpartyRouter
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+    "https://fyp.ngkafong.nets.hk"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_methods=["*"],
+    allow_headers=["Accept", "Content-Type"],
+)
 
 @app.get("/", tags=["Root"])
 def read_root():
