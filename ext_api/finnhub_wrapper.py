@@ -55,19 +55,19 @@ def fetch_1day_stock_news(symbol):
     return news_df.to_dict('records')
 
 # finnhub free tier provide one year historical 
-def fetch_historical_daily_stock_candles(symbol: str, start: int = 366, end: int = 0):
-    if start <= end:
-        logger.warning('Input params warning, empty return')
-        return {}
+# def fetch_historical_daily_stock_candles(symbol: str, start: int = 366, end: int = 0):
+#     if start <= end:
+#         logger.warning('Input params warning, empty return')
+#         return {}
 
-    start_date = datetime.utcnow().date() - timedelta(days=start)
-    end_date = datetime.utcnow().date() - timedelta(days=end)
+#     start_date = datetime.utcnow().date() - timedelta(days=start)
+#     end_date = datetime.utcnow().date() - timedelta(days=end)
 
-    test = finnhub_client.stock_candles(symbol, 'D', 
-        int(time.mktime(start_date.timetuple())), int(time.mktime(end_date.timetuple())))
+#     test = finnhub_client.stock_candles(symbol, 'D', 
+#         int(time.mktime(start_date.timetuple())), int(time.mktime(end_date.timetuple())))
 
-    print('sym', symbol, 'len', len(test['c']))
+#     print('sym', symbol, 'len', len(test['c']))
 
-    #not all 365 days are fetched, since some days are holidays but no way to know how yet
+#     #not all 365 days are fetched, since some days are holidays but no way to know how yet
 
-    # breakpoint()
+#     # breakpoint()
