@@ -8,6 +8,5 @@ pandas
 pytorch-pretrained-bert
 torch
 tqdm
-time
 coloredlogs
 yfinance
