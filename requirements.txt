@@ -1,5 +1,5 @@
-motor
 pymongo[srv]
+gunicorn
 uvicorn
 finnhub-python
 apscheduler
