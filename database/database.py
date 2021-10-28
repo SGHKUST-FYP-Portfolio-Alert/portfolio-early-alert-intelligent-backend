@@ -9,6 +9,8 @@ client = MongoClient(
 database = client['portfolio_alert']
 
 counterparty_collection = database.get_collection('counterparty')
+counterparty_ingest_status_collection = database.get_collection('counterparty_ingest_status')
+counterparty_daily_stock_collection = database.get_collection('counterparty_daily_stock_price')
 news_collection = database.get_collection('news')
 calculation_collection = database.get_collection('calculation')
 
@@ -19,6 +21,10 @@ def add_counterparty(counterparty: dict):
 
 def get_counterparties():
     return counterparty_collection.find()
+
+
+def get_counterparty_ingest_status():
+    return counterparty_ingest_status_collection.find()
 
 
 def add_news(news_datum: List[dict]):

@@ -10,3 +10,4 @@ torch
 tqdm
 coloredlogs
 yfinance
+fastapi
