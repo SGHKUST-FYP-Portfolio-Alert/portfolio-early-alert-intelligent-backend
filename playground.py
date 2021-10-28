@@ -11,8 +11,8 @@ from tqdm import tqdm
 from models.modelInfer import modelInfer
 import models.config as modelConfig
 from typing import List
-from cron import update_sentiment
-   
+from cron import add_sentiment, add_date
+from calculations.sentiment import average
 def main():
     infer_start_time = time.time()
     labels = {0:'neutral', 1:'positive',2:'negative'}
@@ -68,4 +68,4 @@ def main():
 
 
 if __name__ == '__main__':
-    update_sentiment()
+    average()
