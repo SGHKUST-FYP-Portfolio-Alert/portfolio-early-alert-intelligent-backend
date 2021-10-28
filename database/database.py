@@ -10,7 +10,7 @@ database = client['portfolio_alert']
 
 counterparty_collection = database.get_collection('counterparty')
 news_collection = database.get_collection('news')
-
+calculation_collection = database.get_collection('calculation')
 
 def add_counterparty(counterparty: dict):
     return counterparty_collection\
@@ -45,4 +45,33 @@ def update_news(news_datum: List[dict]):
 
 def get_news(filter):
     return news_collection\
+        .find(filter)
+
+def aggregate_news(pipeline):
+    return news_collection\
+        .aggregate(pipeline)
+
+def add_calculation(calculation_datum: List[dict]):
+    operations = [ 
+        ReplaceOne(calculation_data, calculation_data, upsert=True) #Upsert operation
+        for calculation_data in calculation_datum
+    ]  
+
+    calculation_collection.bulk_write(operations)
+    return
+
+def update_calcution(calculation_datum: List[dict]):
+    # [{"_id": XXX, "counterparty": "positive"}, {"_id": XXX, "counterparty": "negative"}]
+    operations = [
+        UpdateOne(
+            {"_id": calculation_data["_id"] },
+            {"$set": calculation_data}
+        )
+        for calculation_data in calculation_datum
+    ]
+    calculation_collection.bulk_write(operations)
+    return
+
+def get_calculation(filter):
+    return calculation_collection\
         .find(filter)
