@@ -16,3 +16,10 @@ https://numpydoc.readthedocs.io/en/latest/format.html
 Download the model from
 https://gohkust-my.sharepoint.com/:u:/g/personal/imyiyang_ust_hk/EQJGiEOkhIlBqlW63TbKA3gBCYgDDcHlBCB7VTXIUMmyiA
 unzip it and put the folder inside the portfolio-early-alert-intelligent-backend directory
+
+
+### Server info:
+ssh root@178.128.29.144
+password: SocGen2122FYP
+
+project directory: /root/fyp/
