@@ -10,3 +10,4 @@ torch
 tqdm
 time
 coloredlogs
+yfinance
