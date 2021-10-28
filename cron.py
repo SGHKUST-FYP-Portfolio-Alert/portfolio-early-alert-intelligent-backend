@@ -1,4 +1,4 @@
-from api import finnhub
+from ext_api import finnhub_wrapper
 from database import database as db
 from models.modelInfer import modelInfer
 import models.config as modelConfig
@@ -8,13 +8,14 @@ from tqdm import tqdm
 
 def daily_update_cron():
     print("daily update in progress")
+
     for counterparty in db.get_counterparties():
         if not db.news_collection.find_one({'counterparty': counterparty['symbol'] or counterparty['name']}):
-            news = finnhub.fetch_historical_stock_news(counterparty['symbol'] or counterparty['name'])
-            db.add_news(news)
+            news = finnhub_wrapper.fetch_historical_stock_news(counterparty['symbol'] or counterparty['name'])
         else:
-            news = finnhub.fetch_1day_stock_news(counterparty['symbol'] or counterparty['name'])
-            db.add_news(news)
+            news = finnhub_wrapper.fetch_1day_stock_news(counterparty['symbol'] or counterparty['name'])
+    db.add_news(news)        
+
     add_sentiment()
     add_date()
     print("daily update completed")
