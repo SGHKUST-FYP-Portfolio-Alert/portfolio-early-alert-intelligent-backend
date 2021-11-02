@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from cron import daily_update_cron
 from routes.counterparty import router as CounterpartyRouter
+from routes.news import router as NewsRouter
+from routes.calculation import router as CalculationRouter
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,7 +11,8 @@ app = FastAPI()
 
 origins = [
     "http://localhost:3000",
-    "https://fyp.ngkafong.nets.hk"
+    "https://fyp.cslix1.ml"
+    "https://fyp.richardng.nets.hk"
 ]
 
 app.add_middleware(
@@ -25,6 +28,8 @@ def read_root():
 
 
 app.include_router(CounterpartyRouter, tags=["Counterparty"], prefix="/counterparty")
+app.include_router(NewsRouter, tags=["News"], prefix="/news")
+app.include_router(CalculationRouter, tags=["Calculation"], prefix="/calculation")
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(

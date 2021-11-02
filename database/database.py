@@ -1,5 +1,5 @@
 from typing import List
-from pymongo import MongoClient, ReplaceOne, UpdateOne
+from pymongo import ASCENDING, MongoClient, ReplaceOne, UpdateOne, DESCENDING, ASCENDING
 from pymongo.collection import ReturnDocument
 
 client = MongoClient(
@@ -49,9 +49,12 @@ def update_news(news_datum: List[dict]):
     news_collection.bulk_write(operations)
     return
 
-def get_news(filter):
+def get_news(filter, skip: int = 0, limit: int = 0):
     return news_collection\
-        .find(filter)
+        .find(filter)\
+        .sort('datetime', DESCENDING)\
+        .skip(skip)\
+        .limit(limit)
 
 def aggregate_news(pipeline):
     return news_collection\
@@ -80,4 +83,5 @@ def update_calcution(calculation_datum: List[dict]):
 
 def get_calculation(filter):
     return calculation_collection\
-        .find(filter)
+        .find(filter)\
+        .sort('date', ASCENDING)

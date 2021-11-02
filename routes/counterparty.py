@@ -15,4 +15,3 @@ def get_counterparties():
 def add_counterparty(counterparty: CounterpartyCreate):
     counterparty = jsonable_encoder(counterparty)
     return db.add_counterparty(counterparty)
-

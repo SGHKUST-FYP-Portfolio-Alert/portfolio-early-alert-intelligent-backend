@@ -8,17 +8,21 @@ from tqdm import tqdm
 
 def daily_update_cron():
     print("daily update in progress")
+        
+    add_news() 
+    add_sentiment()
+    add_date()
+    print("daily update completed")
 
+def add_news():
+    print("Start adding news")
     for counterparty in db.get_counterparties():
         if not db.news_collection.find_one({'counterparty': counterparty['symbol'] or counterparty['name']}):
             news = finnhub_wrapper.fetch_historical_stock_news(counterparty['symbol'] or counterparty['name'])
         else:
             news = finnhub_wrapper.fetch_1day_stock_news(counterparty['symbol'] or counterparty['name'])
-    db.add_news(news)        
+        db.add_news(news)
 
-    add_sentiment()
-    add_date()
-    print("daily update completed")
     
 def add_sentiment():
     # start_dt = datetime.datetime(2021, 10, 14)
