@@ -6,6 +6,7 @@ from typing import List
 
 router = APIRouter()
 
+@router.get("", response_model=List[Counterparty])
 @router.get("/", response_model=List[Counterparty])
 def get_counterparties():
     return list(db.get_counterparties())

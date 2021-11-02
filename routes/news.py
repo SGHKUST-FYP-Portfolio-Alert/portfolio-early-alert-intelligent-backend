@@ -6,6 +6,7 @@ from schemas.news import News
 
 router = APIRouter()
 
+@router.get("", response_model=List[News])
 @router.get("/", response_model=List[News])
 def get_news(counterparty: str = None, skip: int = 0, limit: int = 0):
     if counterparty is not None:
