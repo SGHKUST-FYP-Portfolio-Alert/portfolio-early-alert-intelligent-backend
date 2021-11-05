@@ -1,11 +1,15 @@
+import datetime
+import logging
 from typing import List
-from pymongo import ASCENDING, MongoClient, ReplaceOne, UpdateOne, DESCENDING, ASCENDING
+
+from pymongo import ASCENDING, DESCENDING, MongoClient, ReplaceOne, UpdateOne
 from pymongo.collection import ReturnDocument
 
 client = MongoClient(
     "mongodb+srv://analytics:71mpmU8Lw5ngKhe6@cluster0.lln5s.mongodb.net/"
 )
 
+logger = logging.getLogger(__name__)
 database = client['portfolio_alert']
 
 counterparty_collection = database.get_collection('counterparty')
@@ -18,13 +22,36 @@ def add_counterparty(counterparty: dict):
     return counterparty_collection\
         .find_one_and_replace(counterparty, counterparty, upsert=True, return_document=ReturnDocument.AFTER) #upsert operation
 
-
 def get_counterparties():
     return counterparty_collection.find()
 
 
-def get_counterparty_ingest_status():
-    return counterparty_ingest_status_collection.find()
+def get_one_counterparty_ingest_status(query):
+    return counterparty_ingest_status_collection.find_one(query)
+
+def update_counterparty_ingest_status(query, update)
+    return counterparty_ingest_status_collection.find_one_and_replace(query, update, upsert=True, return_document=ReturnDocument.AFTER)
+
+
+def add_counterparty_stock_candles(candles):
+    for candle in candles:
+        if 'date' not in candle:
+            logger.error('Candle must have date')
+            return False
+        else:
+            temp = candle['date']
+            candle['date'] = datetime.date(temp.year, temp.month, temp.day)
+
+    try:
+        result = counterparty_daily_stock_collection.insert_many(candles)
+    except Exception as e:
+        logger.error('Could not insert. Exception: '+str(e))
+        return False
+
+    if len(result.inserted_ids) != len(candles):
+        logger.error('Not all candles inserted')
+
+    return result
 
 
 def add_news(news_datum: List[dict]):
@@ -59,6 +86,7 @@ def get_news(filter, skip: int = 0, limit: int = 0):
 def aggregate_news(pipeline):
     return news_collection\
         .aggregate(pipeline)
+
 
 def add_calculation(calculation_datum: List[dict]):
     operations = [ 
