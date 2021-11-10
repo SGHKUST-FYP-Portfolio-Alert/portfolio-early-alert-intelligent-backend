@@ -38,7 +38,7 @@ def key_word_heatmap (keywords, keyword_count_dict):
             text = ax.text(j, i, keywords_count[i, j],
                         ha="center", va="center", color="w")
 
-    ax.set_title("Keyword vs Keywork Count")
+    ax.set_title("Keyword vs Keyword Count")
     fig.tight_layout()
     plt.show()
 
