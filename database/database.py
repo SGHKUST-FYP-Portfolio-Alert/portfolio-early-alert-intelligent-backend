@@ -29,7 +29,7 @@ def get_counterparties():
 def get_one_counterparty_ingest_status(query):
     return counterparty_ingest_status_collection.find_one(query)
 
-def update_counterparty_ingest_status(query, update)
+def update_counterparty_ingest_status(query, update):
     return counterparty_ingest_status_collection.find_one_and_replace(query, update, upsert=True, return_document=ReturnDocument.AFTER)
 
 
@@ -40,7 +40,7 @@ def add_counterparty_stock_candles(candles):
             return False
         else:
             temp = candle['date']
-            candle['date'] = datetime.date(temp.year, temp.month, temp.day)
+            candle['date'] = datetime.datetime(temp.year, temp.month, temp.day)
 
     try:
         result = counterparty_daily_stock_collection.insert_many(candles)

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from pymongo.collection import ReturnDocument
 from tqdm import tqdm
@@ -21,21 +21,23 @@ def daily_update_cron():
 
     logger.info("daily update completed")
 
-def ingest_stock_price(date, args):
-    logger.info("Start ingesting stock price")
+def ingest_stock_price(ingest_date, args):
+    logger.debug("Start ingesting stock price for "+args['symbol'])
 
-    hist = yahoo_finance.fetch_historical_daily_stock_candles(args['symbol'], start=date, end=datetime.now(timezone.utc))
+    ingest_date += timedelta(days=1)
+    hist = yahoo_finance.fetch_historical_daily_stock_candles(args['symbol'], start=ingest_date, end=datetime.now(timezone.utc))
     if not len(hist.index):
-        logger.warning(f'No stock price found for {args['symbol']} since {date}')
+        logger.warning(f"No stock price found for {args['symbol']} since {ingest_date}")
+        return False
     
     candles = []
     for date, day_range in hist.iterrows():
         doc = {}
         doc['date'] = date
-        doc['counterpartyId'] = counterparty['_id']
+        doc['counterpartyId'] = args['_id']
         doc.update(dict(day_range))
         
-        doc['refOnly'] = {'name': counterparty['name'], 'symbol': counterparty['symbol']}
+        doc['refOnly'] = {'name': args['name'], 'symbol': args['symbol']}
 
         candles.append(doc)
     
@@ -47,6 +49,7 @@ def ingest_stock_price(date, args):
             
 
 def ingest_news(date, args):
+    logger.debug("Ingest news")
     counterparty = args['symbol'] or args['name']
     logger.debug("Start ingesting news for "+counterparty)
 
@@ -64,11 +67,11 @@ def ingest_news(date, args):
     return True
 
 def check_counterparty_status():
-    logger.info("Start ingest")
+    logger.debug("Start ingest")
 
     ingest_functions = [
-        ingest_stock_price,
         ingest_news,
+        ingest_stock_price,
     ]
 
     for counterparty in db.get_counterparties():
@@ -80,17 +83,15 @@ def check_counterparty_status():
             status['counterpartyId'] = counterparty['_id']
             status['symbolRef'] = counterparty['symbol']
 
-        args = {
-            'symbol': counterparty['symbol'],
-            'name': counterparty['name']
-        }
+        args = {**counterparty}
 
-        for fun in ingest_functions:
-            if fun(status[fun.__name__], args):
-                status[fun.__name__] = datetime.now(timezone.utc)
-        
-        updated = update_counterparty_ingest_status(query, status)
-        loggin.debug('counterparty status updated', updated)
+        for func in ingest_functions:
+            #run function, save date if successful
+            if func(status[func.__name__], args):
+                status[func.__name__] = datetime.now(timezone.utc)
+
+        updated = db.update_counterparty_ingest_status(query, status)
+        logging.debug('counterparty status updated'+str(updated))
 
 '''
 Adds date field with %Y-%m-%d format to each news article collection.
