@@ -24,6 +24,9 @@ def daily_update_cron():
 def ingest_stock_price(ingest_date, args):
     logger.debug("Start ingesting stock price for "+args['symbol'])
 
+    if ingest_date == None:
+        ingest_date = datetime(2000, 1, 1)
+
     ingest_date += timedelta(days=1)
     hist = yahoo_finance.fetch_historical_daily_stock_candles(args['symbol'], start=ingest_date, end=datetime.now(timezone.utc))
     if not len(hist.index):

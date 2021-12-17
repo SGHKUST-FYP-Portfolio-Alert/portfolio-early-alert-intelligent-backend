@@ -45,7 +45,7 @@ def add_counterparty_stock_candles(candles):
     try:
         result = counterparty_daily_stock_collection.insert_many(candles)
     except Exception as e:
-        logger.error('Could not insert. Exception: '+str(e))
+        logger.warning('Could not insert. Exception: '+str(e))
         return False
 
     if len(result.inserted_ids) != len(candles):
