@@ -6,14 +6,12 @@ things to be researched: LDA (Latent Dirichlet Allocation)
 import numpy as np 
 import matplotlib.pyplot as plt
 
-def key_word_count (keywords, news):
+def key_word_count (keywords: str, news: str):
 
     keyword_count_dict = {}
 
-    for i in keywords:
-        for j in news:
-            if i == j:
-                keyword_count_dict[i] = keyword_count_dict.get(i, 0) + 1
+    for keyword in keywords:
+        keyword_count_dict[keyword] = news.count(keyword)
     
     return keyword_count_dict
 
