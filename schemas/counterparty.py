@@ -3,7 +3,7 @@ from typing import Optional
 
 class CounterpartyBase(BaseModel):
     name: str
-    symbol: Optional[str]
+    symbol: str
 
 class CounterpartyCreate(CounterpartyBase):
     pass

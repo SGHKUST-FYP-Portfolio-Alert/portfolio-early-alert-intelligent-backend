@@ -3,3 +3,4 @@ analyst_tone/
 .DS_Store
 play.py
 .ipynb_checkpoints/
+.vscode/
