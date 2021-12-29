@@ -76,12 +76,18 @@ def update_news(news_datum: List[dict]):
     news_collection.bulk_write(operations)
     return
 
-def get_news(filter, skip: int = 0, limit: int = 0):
-    return news_collection\
-        .find(filter)\
-        .sort('datetime', DESCENDING)\
-        .skip(skip)\
-        .limit(limit)
+def get_news(filter, skip: int = 0, limit: int = 0, sort = False):
+    if sort:
+        return news_collection\
+            .find(filter)\
+            .sort('datetime', DESCENDING)\
+            .skip(skip)\
+            .limit(limit)
+    else:
+        return news_collection\
+            .find(filter)\
+            .skip(skip)\
+            .limit(limit)
 
 def aggregate_news(pipeline):
     return news_collection\

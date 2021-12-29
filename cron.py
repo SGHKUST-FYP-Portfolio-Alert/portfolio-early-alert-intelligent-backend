@@ -101,14 +101,12 @@ Adds date field with %Y-%m-%d format to each news article collection.
 '''
 def add_news_datestring():
     filter = {"date":{"$exists": False}}
-    news_no_date = list(db.get_news(filter))
+    news_no_date = db.get_news(filter)
     result_list = []
-    id_loop = [data['_id'] for data in news_no_date]
-    logger.info("Start adding dates")
-    for id, news in tqdm(zip(id_loop,news_no_date),total=len(id_loop)):
+    for news in news_no_date:
         value = datetime.fromtimestamp(news["datetime"])
         date = f"{value:%Y-%m-%d}"
-        result_list.append({"_id":id, "date":date})
+        result_list.append({"_id": news['_id'], "date":date})
     db.update_news(result_list)
 
 '''
