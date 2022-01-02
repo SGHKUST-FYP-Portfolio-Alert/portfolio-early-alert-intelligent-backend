@@ -20,14 +20,15 @@ def get_chart(counterparty: str):
         stock_data = list(db.get_counterparty_stock_candles({'counterpartyId': counterparty_status['counterpartyId']}))
         stock_data = {x['date'].strftime('%Y-%m-%d'): {'closing_stock_price': x['Close']} for x in stock_data}
 
-    #merge all dicts/plots
+    #merge all dicts/plots into { $date: { $name: $value, ... } }
     dd = defaultdict(dict)
     for d in (sent_data, stock_data): # you can list as many input dicts as you want here
         for key, value in d.items():
             name = list(value.keys())[0]
             dd[key][name] = value[name]
 
-    ret = [{'date': key, **item} for key, item in dd.items()] #very messy sorry
+    #flatten the dictionary
+    ret = [{'date': key, **item} for key, item in sorted(dd.items())]
 
     return ret
 
