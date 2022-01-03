@@ -53,6 +53,8 @@ def add_counterparty_stock_candles(candles):
 
     return result
 
+def get_counterparty_stock_candles(filter):
+    return counterparty_daily_stock_collection.find(filter)
 
 def add_news(news_datum: List[dict]):
     operations = [ 
@@ -115,7 +117,7 @@ def update_calcution(calculation_datum: List[dict]):
     calculation_collection.bulk_write(operations)
     return
 
-def get_calculation(filter):
+def get_sent_calculation(filter):
     return calculation_collection\
         .find(filter)\
         .sort('date', ASCENDING)
