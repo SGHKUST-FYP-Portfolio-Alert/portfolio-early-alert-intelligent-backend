@@ -57,6 +57,9 @@ def get_counterparty_stock_candles(filter):
     return counterparty_daily_stock_collection.find(filter)
 
 def add_news(news_datum: List[dict]):
+    if not news_datum:
+        return  # skip operations if news_datum is empty
+
     operations = [ 
         ReplaceOne(news_data, news_data, upsert=True) #Upsert operation
         for news_data in news_datum
@@ -67,6 +70,10 @@ def add_news(news_datum: List[dict]):
 
 def update_news(news_datum: List[dict]):
     # [{"_id": XXX, "sentiment": "positive"}, {"_id": XXX, "sentiment": "negative"}]
+
+    if not news_datum:
+        return  # skip operations if news_datum is empty
+
     operations = [
         UpdateOne(
             {"_id": news_data["_id"] },
@@ -97,6 +104,9 @@ def aggregate_news(pipeline):
 
 
 def add_calculation(calculation_datum: List[dict]):
+    if not calculation_datum:
+        return
+
     operations = [ 
         ReplaceOne(calculation_data, calculation_data, upsert=True) #Upsert operation
         for calculation_data in calculation_datum
@@ -107,6 +117,9 @@ def add_calculation(calculation_datum: List[dict]):
 
 def update_calcution(calculation_datum: List[dict]):
     # [{"_id": XXX, "counterparty": "positive"}, {"_id": XXX, "counterparty": "negative"}]
+    if not calculation_datum:
+        return
+
     operations = [
         UpdateOne(
             {"_id": calculation_data["_id"] },
