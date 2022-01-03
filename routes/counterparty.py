@@ -3,6 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from database import database as db
 from schemas.counterparty import CounterpartyCreate, Counterparty
 from typing import List
+from ext_api.finnhub_wrapper import finnhub_client
 
 router = APIRouter()
 
@@ -16,3 +17,8 @@ def get_counterparties():
 def add_counterparty(counterparty: CounterpartyCreate):
     counterparty = jsonable_encoder(counterparty)
     return db.add_counterparty(counterparty)
+
+
+@router.get("/search")
+def search_counterparties(query: str):
+    return finnhub_client.symbol_lookup(query)
