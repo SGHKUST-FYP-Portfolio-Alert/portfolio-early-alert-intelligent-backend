@@ -19,6 +19,7 @@ def daily_update_cron():
 
     add_news_datestring()
     add_sentiment()
+    add_news_keyword_count()
 
     logger.info("daily update completed")
 
