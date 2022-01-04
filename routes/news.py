@@ -12,5 +12,5 @@ def get_news(counterparty: str = None, skip: int = 0, limit: int = 0):
         news_filter = {'counterparty': counterparty}
     else:
         news_filter = {}
-    return list(db.get_news(news_filter, skip=skip, limit=limit))
+    return list(db.get_news(news_filter, skip=skip, limit=limit, sort=True))
     

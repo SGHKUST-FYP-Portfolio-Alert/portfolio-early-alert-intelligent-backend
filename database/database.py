@@ -53,8 +53,13 @@ def add_counterparty_stock_candles(candles):
 
     return result
 
+def get_counterparty_stock_candles(filter):
+    return counterparty_daily_stock_collection.find(filter)
 
 def add_news(news_datum: List[dict]):
+    if not news_datum:
+        return  # skip operations if news_datum is empty
+
     operations = [ 
         ReplaceOne(news_data, news_data, upsert=True) #Upsert operation
         for news_data in news_datum
@@ -65,6 +70,10 @@ def add_news(news_datum: List[dict]):
 
 def update_news(news_datum: List[dict]):
     # [{"_id": XXX, "sentiment": "positive"}, {"_id": XXX, "sentiment": "negative"}]
+
+    if not news_datum:
+        return  # skip operations if news_datum is empty
+
     operations = [
         UpdateOne(
             {"_id": news_data["_id"] },
@@ -76,12 +85,18 @@ def update_news(news_datum: List[dict]):
     news_collection.bulk_write(operations)
     return
 
-def get_news(filter, skip: int = 0, limit: int = 0):
-    return news_collection\
-        .find(filter)\
-        .sort('datetime', DESCENDING)\
-        .skip(skip)\
-        .limit(limit)
+def get_news(filter, skip: int = 0, limit: int = 0, sort = False):
+    if sort:
+        return news_collection\
+            .find(filter)\
+            .sort('datetime', DESCENDING)\
+            .skip(skip)\
+            .limit(limit)
+    else:
+        return news_collection\
+            .find(filter)\
+            .skip(skip)\
+            .limit(limit)
 
 def aggregate_news(pipeline):
     return news_collection\
@@ -89,6 +104,9 @@ def aggregate_news(pipeline):
 
 
 def add_calculation(calculation_datum: List[dict]):
+    if not calculation_datum:
+        return
+
     operations = [ 
         ReplaceOne(calculation_data, calculation_data, upsert=True) #Upsert operation
         for calculation_data in calculation_datum
@@ -99,6 +117,9 @@ def add_calculation(calculation_datum: List[dict]):
 
 def update_calcution(calculation_datum: List[dict]):
     # [{"_id": XXX, "counterparty": "positive"}, {"_id": XXX, "counterparty": "negative"}]
+    if not calculation_datum:
+        return
+
     operations = [
         UpdateOne(
             {"_id": calculation_data["_id"] },
@@ -109,7 +130,7 @@ def update_calcution(calculation_datum: List[dict]):
     calculation_collection.bulk_write(operations)
     return
 
-def get_calculation(filter):
+def get_sent_calculation(filter):
     return calculation_collection\
         .find(filter)\
         .sort('date', ASCENDING)
