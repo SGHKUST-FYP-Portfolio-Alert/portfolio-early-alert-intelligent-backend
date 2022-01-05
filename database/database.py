@@ -19,11 +19,18 @@ news_collection = database.get_collection('news')
 calculation_collection = database.get_collection('calculation')
 
 def add_counterparty(counterparty: dict):
-    return counterparty_collection\
-        .find_one_and_replace(counterparty, counterparty, upsert=True, return_document=ReturnDocument.AFTER) #upsert operation
+    result = counterparty_collection\
+        .insert_one(counterparty)
+    
+    return counterparty_collection.find_one({'_id': result.inserted_id})
+
 
 def get_counterparties():
     return counterparty_collection.find()
+
+def delete_counterparty(symbol: str):
+    result = counterparty_collection.delete_one({'symbol': symbol})
+    return result.deleted_count
 
 
 def get_one_counterparty_ingest_status(query):
