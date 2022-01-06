@@ -7,6 +7,7 @@ from tqdm import tqdm
 import models.config as modelConfig
 from database import database as db
 from ext_api import finnhub_wrapper, yahoo_finance
+from models.keywordModelling import keyword_count
 from models.modelInfer import modelInfer
 
 logger = logging.getLogger(__name__)
@@ -18,6 +19,7 @@ def daily_update_cron():
 
     add_news_datestring()
     add_sentiment()
+    add_news_keyword_count()
 
     logger.info("daily update completed")
 
@@ -123,3 +125,17 @@ def add_sentiment():
     myModel = modelInfer(news_no_sentiment,modelConfig)
     infered_result = myModel.infer()
     db.update_news(infered_result)
+
+
+'''
+Adds keyword count to news articles without one.
+'''
+def add_news_keyword_count():
+    logger.info("Start adding sentiment")
+    filter = {"keyword_count":{"$exists": False}}
+    news_no_keyword_count = list(db.get_news(filter))
+    result = [{
+        '_id': news['_id'],
+        'keyword_count': keyword_count(news['headline']+news['summary'])
+    } for news in news_no_keyword_count]
+    db.update_news(result)
