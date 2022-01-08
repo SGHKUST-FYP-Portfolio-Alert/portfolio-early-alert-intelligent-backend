@@ -17,7 +17,6 @@ def daily_update_cron():
     
     check_counterparty_status()
 
-    add_news_datestring()
     add_sentiment()
     add_news_keyword_count()
 
@@ -55,7 +54,7 @@ def ingest_stock_price(ingest_date, args):
 
 def ingest_news(date, args):
     logger.debug("Ingest news")
-    counterparty = args['symbol'] or args['name']
+    counterparty = args['symbol']
     logger.debug("Start ingesting news for "+counterparty)
 
     if not date:
@@ -97,19 +96,6 @@ def check_counterparty_status():
 
         updated = db.update_counterparty_ingest_status(query, status)
         logging.debug('counterparty status updated'+str(updated))
-
-'''
-Adds date field with %Y-%m-%d format to each news article collection.
-'''
-def add_news_datestring():
-    filter = {"date":{"$exists": False}}
-    news_no_date = db.get_news(filter)
-    result_list = []
-    for news in news_no_date:
-        value = datetime.fromtimestamp(news["datetime"])
-        date = f"{value:%Y-%m-%d}"
-        result_list.append({"_id": news['_id'], "date":date})
-    db.update_news(result_list)
 
 '''
 Adds sentiment to news articles without one.
