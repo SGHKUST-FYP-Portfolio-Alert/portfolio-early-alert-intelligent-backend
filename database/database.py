@@ -4,7 +4,7 @@ from typing import List
 
 from pymongo import ASCENDING, DESCENDING, MongoClient, UpdateOne
 from pymongo.collection import ReturnDocument
-from database.database_helper import InsertIfNotExist
+from database.database_helper import InsertIfNotExist, UpsertOne
 
 client = MongoClient(
     "mongodb+srv://analytics:71mpmU8Lw5ngKhe6@cluster0.lln5s.mongodb.net/"
@@ -51,13 +51,14 @@ def add_counterparty_stock_candles(candles):
             candle['date'] = datetime.datetime(temp.year, temp.month, temp.day)
 
     try:
-        result = counterparty_daily_stock_collection.insert_many(candles)
+        operations = [
+            UpsertOne(candle, keys=['counterpartyId', 'date'])  # use upsert instead of insert
+            for candle in candles
+        ]
+        result = counterparty_daily_stock_collection.bulk_write(operations)
     except Exception as e:
         logger.warning('Could not insert. Exception: '+str(e))
         return False
-
-    if len(result.inserted_ids) != len(candles):
-        logger.error('Not all candles inserted')
 
     return result
 
