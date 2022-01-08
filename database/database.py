@@ -2,8 +2,9 @@ import datetime
 import logging
 from typing import List
 
-from pymongo import ASCENDING, DESCENDING, MongoClient, ReplaceOne, UpdateOne
+from pymongo import ASCENDING, DESCENDING, MongoClient, UpdateOne
 from pymongo.collection import ReturnDocument
+from database.database_helper import InsertIfNotExist
 
 client = MongoClient(
     "mongodb+srv://analytics:71mpmU8Lw5ngKhe6@cluster0.lln5s.mongodb.net/"
@@ -68,7 +69,7 @@ def add_news(news_datum: List[dict]):
         return  # skip operations if news_datum is empty
 
     operations = [ 
-        ReplaceOne(news_data, news_data, upsert=True) #Upsert operation
+        InsertIfNotExist(news_data)
         for news_data in news_datum
     ]  
 
@@ -115,7 +116,7 @@ def add_calculation(calculation_datum: List[dict]):
         return
 
     operations = [ 
-        ReplaceOne(calculation_data, calculation_data, upsert=True) #Upsert operation
+        InsertIfNotExist(calculation_data)
         for calculation_data in calculation_datum
     ]  
 
