@@ -27,6 +27,9 @@ def fetch_historical_stock_news(symbol):
             datetime.utcfromtimestamp(news[-1]['datetime']).date()
         )
     
+    if not news:
+        return []   #skip if no news found
+
     news_df = pd.DataFrame(news).drop_duplicates(subset=['datetime', 'headline', 'source'])
     news_df['api'] = 'Finnhub'
     news_df['counterparty'] = symbol
@@ -45,6 +48,9 @@ def fetch_1day_stock_news(symbol):
 
     time.sleep(1)
     news = finnhub_client.company_news(symbol, _from=start_date.isoformat(), to=end_date.isoformat())
+
+    if not news:
+        return []   #skip if no news found
 
     news_df = pd.DataFrame(news).drop_duplicates(subset=['datetime', 'headline', 'source'])
     news_df['api'] = 'Finnhub'
