@@ -107,10 +107,13 @@ def add_sentiment():
     # unix_end_dt = end_dt.replace(tzinfo=timezone.utc).timestamp()
     logger.info("Start adding sentiment")
     filter = {"sentiment":{"$exists": False}}
-    news_no_sentiment = list(db.get_news(filter))
-    myModel = modelInfer(news_no_sentiment,modelConfig)
-    infered_result = myModel.infer()
-    db.update_news(infered_result)
+    batch_size = 1024   #infer news by batch to prevent infinite stuck when infer time >1 day
+
+    while db.get_news(filter).count():
+        news_no_sentiment = list(db.get_news(filter, limit=batch_size))
+        myModel = modelInfer(news_no_sentiment,modelConfig)
+        infered_result = myModel.infer()
+        db.update_news(infered_result)
 
 
 '''
