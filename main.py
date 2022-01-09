@@ -34,11 +34,11 @@ app.include_router(CalculationRouter, tags=["Calculation"], prefix="/calculation
 scheduler = BackgroundScheduler()
 scheduler.add_job(
     daily_ingest_external_data_cron,
-    CronTrigger(hour='5')   #trigger 5am everyday.
+    CronTrigger(hour='21')   #trigger 5am (21utc) everyday.
 )
 scheduler.add_job(
     daily_update_calculation_cron,
-    CronTrigger(hour='6')   #trigger 6am everyday.
+    CronTrigger(hour='22')   #trigger 6am (22utc) everyday.
 )
 
 scheduler.start()
