@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from cron import daily_update_cron
+from cron import daily_ingest_external_data_cron, daily_update_calculation_cron
 from routes.counterparty import router as CounterpartyRouter
 from routes.news import router as NewsRouter
 from routes.calculation import router as CalculationRouter
@@ -33,7 +33,12 @@ app.include_router(CalculationRouter, tags=["Calculation"], prefix="/calculation
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(
-    daily_update_cron,
+    daily_ingest_external_data_cron,
+    CronTrigger(hour='5')   #trigger 5am everyday.
+)
+scheduler.add_job(
+    daily_update_calculation_cron,
     CronTrigger(hour='6')   #trigger 6am everyday.
 )
+
 scheduler.start()

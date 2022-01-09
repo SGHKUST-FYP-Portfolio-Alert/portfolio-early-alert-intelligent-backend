@@ -12,15 +12,20 @@ from models.modelInfer import modelInfer
 
 logger = logging.getLogger(__name__)
 
-def daily_update_cron():
-    logger.info("daily update in progress")
-    
+def daily_ingest_external_data_cron():
+    logger.info("daily ingest data in progress")
     check_counterparty_status()
+    logger.info("daily ingest data completed")
 
+
+
+def daily_update_calculation_cron():
+    logger.info("daily update calculation in progress")
     add_sentiment()
     add_news_keyword_count()
+    logger.info("daily update calculation completed")
 
-    logger.info("daily update completed")
+
 
 def ingest_stock_price(ingest_date, args):
     logger.debug("Start ingesting stock price for "+args['symbol'])
