@@ -8,7 +8,7 @@ import time
 import torch.nn.functional as F
 
 class modelInfer:
-    def __init__(self, news:List[dict], config):
+    def __init__(self, config, news:List[dict] = []):
         self.labels = config.labels
         self.vocab = config.vocab
         self.vocab_path = config.vocab_path
@@ -18,7 +18,10 @@ class modelInfer:
         self.model = BertClassification(weight_path= config.pretrained_weights_path, num_labels=len(self.labels), vocab=self.vocab)
         self.news = news
         self.device = config.device
-        
+    
+    def set_news(self, news:List[dict]):
+        self.news = news
+
     def infer(self):
         id_loop = [data['_id'] for data in self.news]
         sentences = [data['headline'] for data in self.news]

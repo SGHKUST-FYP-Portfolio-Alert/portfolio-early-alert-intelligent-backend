@@ -104,6 +104,7 @@ def check_counterparty_status():
 '''
 Adds sentiment to news articles without one.
 '''
+sentModel = modelInfer(modelConfig)
 def add_sentiment():
     # start_dt = datetime(2021, 10, 14)
     # unix_start_dt = start_dt.replace(tzinfo=timezone.utc).timestamp()
@@ -115,8 +116,8 @@ def add_sentiment():
 
     while db.get_news(filter).count():
         news_no_sentiment = list(db.get_news(filter, limit=batch_size))
-        myModel = modelInfer(news_no_sentiment,modelConfig)
-        infered_result = myModel.infer()
+        sentModel.set_news(news_no_sentiment)
+        infered_result = sentModel.infer()
         logger.info(f'infer of {len(infered_result)} news completed')
         db.update_news(infered_result)
 
