@@ -2,7 +2,6 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 from pymongo.collection import ReturnDocument
-from tqdm import tqdm
 
 import models.config as modelConfig
 from database import database as db
@@ -70,7 +69,7 @@ def ingest_news(date, args):
     try:
         db.add_news(news)
     except Exception as e:
-        logger.error("New ingest failed for "+counterparty)
+        logger.error("New ingest failed for "+counterparty, e)
         return False
 
     return True
@@ -118,6 +117,7 @@ def add_sentiment():
         news_no_sentiment = list(db.get_news(filter, limit=batch_size))
         myModel = modelInfer(news_no_sentiment,modelConfig)
         infered_result = myModel.infer()
+        logger.info(f'infer of {len(infered_result)} news completed')
         db.update_news(infered_result)
 
 

@@ -7,7 +7,6 @@ apscheduler
 pandas
 pytorch-pretrained-bert
 torch
-tqdm
 coloredlogs
 yfinance
 fastapi

@@ -2,7 +2,6 @@ from pytorch_pretrained_bert import BertTokenizer
 from pytorch_pretrained_bert.tokenization import VOCAB_NAME
 from models.bertModel import BertClassification
 from typing import List
-from tqdm import tqdm
 import torch
 from typing import List
 import time
@@ -26,7 +25,7 @@ class modelInfer:
         tokenizer = BertTokenizer(vocab_file = self.vocab_path, do_lower_case = True, do_basic_tokenize = True)
         self.model.eval()
         result_list = []
-        for id, sent in tqdm(zip(id_loop,sentences),total=len(id_loop)): 
+        for id, sent in zip(id_loop,sentences): 
             tokenized_sent = tokenizer.tokenize(sent)
             if len(tokenized_sent) > self.max_seq_length:
                 tokenized_sent = tokenized_sent[:self.max_seq_length]

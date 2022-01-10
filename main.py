@@ -6,6 +6,9 @@ from routes.calculation import router as CalculationRouter
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi.middleware.cors import CORSMiddleware
+import coloredlogs
+
+coloredlogs.install(level='INFO', fmt='%(asctime)s %(name)s[%(process)d] %(funcName)s %(levelname)s %(message)s')
 
 app = FastAPI()
 
