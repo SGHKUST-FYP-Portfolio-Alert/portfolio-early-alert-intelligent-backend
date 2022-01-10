@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import FastAPI
 from cron import daily_ingest_external_data_cron, daily_update_calculation_cron
 from routes.counterparty import router as CounterpartyRouter
@@ -41,7 +42,8 @@ scheduler.add_job(
 )
 scheduler.add_job(
     daily_update_calculation_cron,
-    CronTrigger(hour='22')   #trigger 6am (22utc) everyday.
+    CronTrigger(hour='22'),   #trigger 6am (22utc) everyday.
+    next_run_time=datetime.now()
 )
 
 scheduler.start()
