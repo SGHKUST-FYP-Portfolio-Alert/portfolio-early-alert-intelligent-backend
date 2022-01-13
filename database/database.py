@@ -112,32 +112,16 @@ def aggregate_news(pipeline):
         .aggregate(pipeline)
 
 
-def add_calculation(calculation_datum: List[dict]):
-    if not calculation_datum:
-        return
 
-    operations = [ 
-        InsertIfNotExist(calculation_data)
-        for calculation_data in calculation_datum
-    ]  
-
-    calculation_collection.bulk_write(operations)
-    return
-
-def update_calcution(calculation_datum: List[dict]):
-    # [{"_id": XXX, "counterparty": "positive"}, {"_id": XXX, "counterparty": "negative"}]
-    if not calculation_datum:
+def add_calculations(calculations: List[dict]):
+    if not calculations:
         return
 
     operations = [
-        UpdateOne(
-            {"_id": calculation_data["_id"] },
-            {"$set": calculation_data}
-        )
-        for calculation_data in calculation_datum
+        UpsertOne(calculation, keys = ['date', 'counterparty'])
+        for calculation in calculations
     ]
-    calculation_collection.bulk_write(operations)
-    return
+    return calculation_collection.bulk_write(operations)
 
 def get_sent_calculation(filter):
     return calculation_collection\
