@@ -13,11 +13,11 @@ def aggregate_sentiments_daily():
     return db.aggregate_news(pipeline)
 
 
-def aggregate_keywords_daily():
+def aggregate_keywords_news_count_daily():
 
     pipeline =  [
-        {'$group': {'_id': {'date': '$date', 'counterparty':'$counterparty'}, 'keyword_count': {'$mergeObjects': '$keyword_count'}}},
-        {'$project': {'_id': 0, 'date':'$_id.date', 'counterparty':'$_id.counterparty', 'keyword_count': '$keyword_count'}}
+        {'$group': {'_id': {'date': '$date', 'counterparty':'$counterparty'}, 'keyword_count': {'$mergeObjects': '$keyword_count'}, 'news_count': {'$sum':1}}},
+        {'$project': {'_id': 0, 'date':'$_id.date', 'counterparty':'$_id.counterparty', 'keyword_count': 1, 'news_count': 1}}
     ]
 
     return db.aggregate_news(pipeline)

@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 from pymongo.collection import ReturnDocument
-from calculations.aggregate import aggregate_keywords_daily, aggregate_sentiments_daily
+from calculations.aggregate import aggregate_keywords_news_count_daily, aggregate_sentiments_daily
 
 import models.config as modelConfig
 from database import database as db
@@ -144,5 +144,5 @@ Aggregate news results of the same day
 def add_daily_aggregated_calculations():
     sentiments = aggregate_sentiments_daily()
     db.add_calculations(sentiments)
-    keywords = aggregate_keywords_daily()
+    keywords = aggregate_keywords_news_count_daily()
     db.add_calculations(keywords)
