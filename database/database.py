@@ -123,7 +123,7 @@ def add_calculations(calculations: List[dict]):
     ]
     return calculation_collection.bulk_write(operations)
 
-def get_sent_calculation(filter):
+def get_calculations(filter):
     return calculation_collection\
         .find(filter)\
         .sort('date', ASCENDING)
