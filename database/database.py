@@ -63,7 +63,7 @@ def add_counterparty_stock_candles(candles):
     return result
 
 def get_counterparty_stock_candles(filter):
-    return counterparty_daily_stock_collection.find(filter)
+    return counterparty_daily_stock_collection.find(filter).sort('date', ASCENDING)
 
 def add_news(news_datum: List[dict]):
     if not news_datum:
