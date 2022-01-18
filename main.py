@@ -16,6 +16,7 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",
     "https://fyp.cslix1.ml",
+    "https://fyp.cslix1.nets.hk",
     "https://fyp.richardng.nets.hk"
 ]
 
