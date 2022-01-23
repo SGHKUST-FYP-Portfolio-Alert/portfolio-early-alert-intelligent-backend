@@ -18,6 +18,8 @@ class modelInfer:
         self.model = BertClassification(weight_path= config.pretrained_weights_path, num_labels=len(self.labels), vocab=self.vocab)
         self.news = news
         self.device = config.device
+        self.model.load_state_dict(torch.load(self.fine_tuned_weight_path, map_location=self.device))
+        self.model.to(self.device)
     
     def set_news(self, news:List[dict]):
         self.news = news

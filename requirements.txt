@@ -1,5 +1,5 @@
 fastapi
-pymongo[srv]
+pymongo[srv]~=3.12
 gunicorn
 uvicorn
 finnhub-python
