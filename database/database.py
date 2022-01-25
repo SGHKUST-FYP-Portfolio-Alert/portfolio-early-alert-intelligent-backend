@@ -65,8 +65,8 @@ def add_counterparty_stock_candles(candles):
 
     return result
 
-def get_counterparty_stock_candles(filter):
-    return counterparty_daily_stock_collection.find(filter).sort('date', ASCENDING)
+def get_counterparty_stock_candles(filter, limit=1000):
+    return counterparty_daily_stock_collection.find(filter).sort('date', DESCENDING).limit(limit)
 
 def add_news(news_datum: List[dict]):
     if not news_datum:
@@ -97,7 +97,7 @@ def update_news(news_datum: List[dict]):
     news_collection.bulk_write(operations)
     return
 
-def get_news(filter, skip: int = 0, limit: int = 0, sort = False):
+def get_news(filter, skip: int = 0, limit: int = 100, sort = False):
     if sort:
         return news_collection\
             .find(filter)\
