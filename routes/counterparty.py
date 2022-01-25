@@ -12,6 +12,11 @@ router = APIRouter()
 def get_counterparties():
     return list(db.get_counterparties())
 
+@router.get("/", response_model=Counterparty)
+def get_counterparty(symbol: str):
+    filter = { 'symbol': symbol }
+    return db.get_counterparty(filter)
+
 
 @router.post("", response_model=Counterparty, status_code=201)
 def add_counterparty(counterparty: CounterpartyCreate):

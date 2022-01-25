@@ -29,6 +29,9 @@ def add_counterparty(counterparty: dict):
 def get_counterparties():
     return counterparty_collection.find()
 
+def get_counterparty(filter: dict = {}):
+    return counterparty_collection.find_one(filter)
+
 def delete_counterparty(symbol: str):
     result = counterparty_collection.delete_one({'symbol': symbol})
     return result.deleted_count
