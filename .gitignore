@@ -5,3 +5,4 @@ play.py
 .ipynb_checkpoints/
 .vscode/
 saved_arrays/
+news_df.csv
