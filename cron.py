@@ -8,6 +8,7 @@ import models.config as modelConfig
 from database import database as db
 from ext_api import finnhub_wrapper, yahoo_finance
 from models.keywordModelling import keyword_count
+from models.ldaModel import get_lda
 from models.modelInfer import modelInfer
 
 logger = logging.getLogger(__name__)
@@ -146,3 +147,12 @@ def add_daily_aggregated_calculations():
     db.add_calculations(sentiments)
     keywords = aggregate_keywords_news_count_daily()
     db.add_calculations(keywords)
+
+
+def add_lda():
+    for counterparty in db.get_counterparties():
+        filter = {'counterparty': counterparty['symbol']}
+        news = db.get_news(filter)
+        sentences = [new['headline'] + ' ' + new['summary'] for new in news]
+        model = get_lda(sentences)
+        db.save_lda(counterparty['_id'], model)

@@ -1,3 +1,4 @@
+import pickle
 import datetime
 import logging
 from typing import List
@@ -130,3 +131,9 @@ def get_calculations(filter):
     return calculation_collection\
         .find(filter)\
         .sort('date', ASCENDING)
+
+
+def save_lda(counterpartyId, model):
+    data = { 'counterpartyId': counterpartyId, 'model': pickle.dumps(model)}
+    return database['lda']\
+        .insert_one(data)

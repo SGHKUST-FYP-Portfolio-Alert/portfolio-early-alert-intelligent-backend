@@ -10,3 +10,6 @@ torch
 coloredlogs
 yfinance
 fastapi
+gensim
+nltk
+pickle
