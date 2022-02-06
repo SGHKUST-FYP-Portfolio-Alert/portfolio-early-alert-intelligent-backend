@@ -4,6 +4,7 @@ from gensim.models import LdaMulticore
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer 
+import re
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -13,6 +14,8 @@ stop_words = stopwords.words('english')
 def sents_to_words(sentences):
     for sentence in sentences:
         yield(simple_preprocess(str(sentence), deacc=True))
+
+
         
 def remove_stopwords(docs):
     refined_docs = []
@@ -27,6 +30,8 @@ def remove_stopwords(docs):
     return refined_docs
 
 def get_lda(sentences, num_topics=20):
+    sentences = sentences.map(lambda x: re.sub(r'[,\.!?]', '', x))
+
     docs = list(sents_to_words(sentences))
     docs = remove_stopwords(docs)
     id2word = corpora.Dictionary(docs)
