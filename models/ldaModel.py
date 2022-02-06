@@ -1,5 +1,6 @@
 from gensim.utils import simple_preprocess
 import gensim.corpora as corpora
+from gensim.models import LdaMulticore
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer 
@@ -25,13 +26,14 @@ def remove_stopwords(docs):
         
     return refined_docs
 
-def get_lda(sentences, num_topics):
+def get_lda(sentences, num_topics=20):
     docs = list(sents_to_words(sentences))
     docs = remove_stopwords(docs)
     id2word = corpora.Dictionary(docs)
     corpus = [id2word.doc2bow(doc) for doc in docs]
 
-    lda_model = gensim.models.LdaMulticore(corpus=corpus,
-                                        id2word=id2word,
-                                       num_topics=num_topics)
+    lda_model = LdaMulticore(corpus=corpus,
+                            id2word=id2word,
+                            num_topics=num_topics,
+                            passes=10)
     return lda_model

@@ -9,10 +9,9 @@ def keyword_count (news):
     
     for keyword in keywords:
         keyword = keyword.lower()
-        for news_str in news:
-            news_str = news_str.lower()
-            if keyword in news_str:
-                keywords_count_dict[keyword] = keywords_count_dict.get(keyword, 0) + 1
+        news = news.lower()
+        if keyword in news:
+            keywords_count_dict[keyword] = keywords_count_dict.get(keyword, 0) + 1
     
     return keywords_count_dict
 

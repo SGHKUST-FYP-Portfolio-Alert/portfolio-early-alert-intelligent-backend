@@ -25,6 +25,7 @@ def daily_update_calculation_cron():
     add_sentiment()
     add_news_keyword_count()
     add_daily_aggregated_calculations()
+    add_lda()
     logger.info("daily update calculation completed")
 
 
@@ -129,7 +130,7 @@ def add_sentiment():
 Adds keyword count to news articles without one.
 '''
 def add_news_keyword_count():
-    logger.info("Start adding sentiment")
+    logger.info("Start adding keyword count")
     filter = {"keyword_count":{"$exists": False}}
     news_no_keyword_count = list(db.get_news(filter))
     result = [{
@@ -151,8 +152,10 @@ def add_daily_aggregated_calculations():
 
 def add_lda():
     for counterparty in db.get_counterparties():
-        filter = {'counterparty': counterparty['symbol']}
-        news = db.get_news(filter)
-        sentences = [new['headline'] + ' ' + new['summary'] for new in news]
-        model = get_lda(sentences)
-        db.save_lda(counterparty['_id'], model)
+        if db.lda_collection.find_one({'counterpartyId': counterparty['_id']}) is None:
+            filter = {'counterparty': counterparty['symbol']}
+            news = db.get_news(filter)
+            sentences = [new['headline'] + ' ' + new['summary'] for new in news]
+            model = get_lda(sentences)
+            db.save_lda(counterparty['_id'], model)
+            logger.info(f'lda added for {counterparty["symbol"]}')
