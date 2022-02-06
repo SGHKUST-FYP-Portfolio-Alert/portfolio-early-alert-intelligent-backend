@@ -4,9 +4,10 @@ from pymongo import UpdateOne
 '''
 Do nothing if exist
 '''
-def InsertIfNotExist(document):
+def InsertIfNotExist(document, keys):
+    filter = { key: document[key] for key in keys }
     return UpdateOne(
-        document, 
+        filter, 
         {'$setOnInsert': document},
         upsert=True
     )

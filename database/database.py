@@ -1,3 +1,4 @@
+import pickle
 import datetime
 import logging
 from typing import List
@@ -5,6 +6,8 @@ from typing import List
 from pymongo import ASCENDING, DESCENDING, MongoClient, UpdateOne
 from pymongo.collection import ReturnDocument
 from database.database_helper import InsertIfNotExist, UpsertOne
+
+from datetime import datetime
 
 client = MongoClient(
     "mongodb+srv://analytics:71mpmU8Lw5ngKhe6@cluster0.lln5s.mongodb.net/"
@@ -18,6 +21,7 @@ counterparty_ingest_status_collection = database.get_collection('counterparty_in
 counterparty_daily_stock_collection = database.get_collection('counterparty_daily_stock_price')
 news_collection = database.get_collection('news')
 calculation_collection = database.get_collection('calculation')
+lda_collection = database.get_collection('lda')
 
 def add_counterparty(counterparty: dict):
     result = counterparty_collection\
@@ -73,7 +77,7 @@ def add_news(news_datum: List[dict]):
         return  # skip operations if news_datum is empty
 
     operations = [ 
-        InsertIfNotExist(news_data)
+        InsertIfNotExist(news_data, keys = ['counterparty', 'datetime', 'headline'])
         for news_data in news_datum
     ]  
 
@@ -97,7 +101,7 @@ def update_news(news_datum: List[dict]):
     news_collection.bulk_write(operations)
     return
 
-def get_news(filter, skip: int = 0, limit: int = 100, sort = False):
+def get_news(filter, skip: int = 0, limit: int = 0, sort = False):
     if sort:
         return news_collection\
             .find(filter)\
@@ -130,3 +134,31 @@ def get_calculations(filter):
     return calculation_collection\
         .find(filter)\
         .sort('date', ASCENDING)
+
+
+def save_lda(counterpartyId, model):
+    data = { 
+        'counterpartyId': counterpartyId, 
+        'model': pickle.dumps(model),
+        'datetime': datetime.utcnow()
+    }
+    return lda_collection\
+        .insert_one(data)
+
+def get_lda(symbol: str):
+
+    counterparty = counterparty_collection.find_one({'symbol': symbol})
+    
+    if counterparty is None:
+        return None
+    
+    filter = { "counterpartyId": counterparty['_id']}
+    result = lda_collection.find_one(filter)
+    
+    if result is None:
+        return None
+    
+    return {
+        **result,
+        'model': pickle.loads(result['model'])
+    }

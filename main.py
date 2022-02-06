@@ -4,6 +4,7 @@ from cron import daily_ingest_external_data_cron, daily_update_calculation_cron
 from routes.counterparty import router as CounterpartyRouter
 from routes.news import router as NewsRouter
 from routes.chart import router as ChartRouter
+from routes.lda import router as LdaRouter
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi.middleware.cors import CORSMiddleware
@@ -35,6 +36,7 @@ def read_root():
 app.include_router(CounterpartyRouter, tags=["Counterparty"], prefix="/counterparty")
 app.include_router(NewsRouter, tags=["News"], prefix="/news")
 app.include_router(ChartRouter, tags=["Calculation"], prefix="/chart")
+app.include_router(LdaRouter, tags=["LDA"], prefix="/lda")
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(
