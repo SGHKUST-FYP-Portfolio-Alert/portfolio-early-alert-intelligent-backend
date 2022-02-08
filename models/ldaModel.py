@@ -32,7 +32,7 @@ def get_lda(sentences, num_topics=20):
     docs = list(sents_to_words(sentences))
     docs = remove_stopwords(docs)
     id2word = corpora.Dictionary(docs)
-    id2word.filter_extremes()
+    id2word.filter_extremes(no_above=0.25)
     corpus = [id2word.doc2bow(doc) for doc in docs]
 
     lda_model = LdaModel(corpus=corpus,
