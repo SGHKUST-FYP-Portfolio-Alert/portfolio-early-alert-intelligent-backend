@@ -1,6 +1,6 @@
 from gensim.utils import simple_preprocess
 import gensim.corpora as corpora
-from gensim.models import LdaMulticore
+from gensim.models import LdaModel
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer 
@@ -35,7 +35,7 @@ def get_lda(sentences, num_topics=20):
     id2word.filter_extremes()
     corpus = [id2word.doc2bow(doc) for doc in docs]
 
-    lda_model = LdaMulticore(corpus=corpus,
+    lda_model = LdaModel(corpus=corpus,
                             id2word=id2word,
                             num_topics=num_topics,
                             passes=10)
