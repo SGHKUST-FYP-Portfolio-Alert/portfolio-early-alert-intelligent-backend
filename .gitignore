@@ -6,3 +6,5 @@ play.py
 .vscode/
 saved_arrays/
 news_df.csv
+eval/
+eval*
