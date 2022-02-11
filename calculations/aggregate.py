@@ -1,16 +1,54 @@
 from database import database as db
-from datetime import timezone
-import datetime
+
+def weighted_rolling_average(avgs: list, weights: list, decay=0.8):
+
+    r_avgs = []
+    r_weights = []
+
+    for avg, weight in zip(avgs, weights):
+        if len(r_avgs) == 0:
+            prev_r_weight = 0
+            prev_r_avg = 0
+        else:
+            prev_r_weight = r_weights[-1]
+            prev_r_avg = r_avgs[-1]
+        
+        r_weight = decay * prev_r_weight + weight
+        r_avg = (decay * prev_r_weight * prev_r_avg + avg * weight)/r_weight
+
+        r_avgs.append(r_avg)
+        r_weights.append(r_weight)
+
+    return (r_avgs, r_weights)
 
 def aggregate_sentiments_daily():
     
     pipeline = [
         {'$group': {'_id': { 'date': '$date', 'counterparty': '$counterparty', 'sentiment': '$sentiment'}, 'count':{'$sum':1}}},
-        {'$group': {'_id': {'date':'$_id.date', 'counterparty':'$_id.counterparty'}, 'sentiments': {'$addToSet' : {'k': {'$toString': '$_id.sentiment'}, 'v':'$count'}}}},
-        {'$project': {'_id': 0, 'date':'$_id.date', 'counterparty':'$_id.counterparty', 'sentiments': {'$arrayToObject': '$sentiments'} }}
+        {'$group': {'_id': {'date':'$_id.date', 'counterparty':'$_id.counterparty'}, 'news_count': {'$sum': '$count'}, 'sentiments': {'$addToSet' : {'k': {'$toString': '$_id.sentiment'}, 'v':'$count'}}}},
+        {'$project': {'_id': 0, 'date':'$_id.date', 'counterparty':'$_id.counterparty', 'news_count': 1, 'sentiments': {'$arrayToObject': '$sentiments'} }},
+        {'$group': {'_id': '$counterparty', 'results': {'$push': {'date': '$date', 'news_count': '$news_count', 'sentiments': '$sentiments'}}}},
+        {'$project':{'_id': 0, 'counterparty': '$_id', 'results': 1}}
     ]
 
-    return db.aggregate_news(pipeline)
+    aggregated = db.aggregate_news(pipeline)
+
+    output = []
+    for a in aggregated:
+        results = sorted(a['results'], key= lambda x: x['date'])
+        avgs = [(r['sentiments'].get('1', 0) - r['sentiments'].get('-1', 0))/r['news_count'] for r in results]
+        weights = [r['news_count'] for r in results]
+        r_avgs, r_weights = weighted_rolling_average(avgs, weights)
+        for r, avg, r_avg, r_weight in zip(results, avgs, r_avgs, r_weights):
+            r['sentiments']['avg'] = avg
+            r['sentiments']['rolling_avg'] = r_avg
+            r['sentiments']['rolling_weight'] = r_weight
+            r['counterparty'] = a['counterparty']
+            output.append(r)
+
+    return output
+
+
 
 
 def aggregate_keywords_news_count_daily():
