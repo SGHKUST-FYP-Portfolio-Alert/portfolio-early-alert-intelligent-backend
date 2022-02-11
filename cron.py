@@ -36,7 +36,7 @@ def ingest_stock_price(ingest_date, args):
     if ingest_date == None:
         ingest_date = datetime(2000, 1, 1)
 
-    ingest_date += timedelta(days=1)
+    # ingest_date += timedelta(days=1)
     hist = yahoo_finance.fetch_historical_daily_stock_candles(args['symbol'], start=ingest_date, end=datetime.now(timezone.utc))
     if not len(hist.index):
         logger.warning(f"No stock price found for {args['symbol']} since {ingest_date}")
@@ -65,10 +65,7 @@ def ingest_news(date, args):
     counterparty = args['symbol']
     logger.debug("Start ingesting news for "+counterparty)
 
-    if not date:
-        news = finnhub_wrapper.fetch_historical_stock_news(counterparty)
-    else:
-        news = finnhub_wrapper.fetch_1day_stock_news(counterparty)
+    news = finnhub_wrapper.fetch_historical_stock_news(counterparty, date)
     
     try:
         db.add_news(news)

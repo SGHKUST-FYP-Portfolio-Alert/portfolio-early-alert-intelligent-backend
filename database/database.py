@@ -1,12 +1,9 @@
 import pickle
-import datetime
 import logging
 from typing import List
-
 from pymongo import ASCENDING, DESCENDING, MongoClient, UpdateOne
 from pymongo.collection import ReturnDocument
 from database.database_helper import InsertIfNotExist, UpsertOne
-
 from datetime import datetime
 
 client = MongoClient(
@@ -55,7 +52,7 @@ def add_counterparty_stock_candles(candles):
             return False
         else:
             temp = candle['date']
-            candle['date'] = datetime.datetime(temp.year, temp.month, temp.day)
+            candle['date'] = datetime(temp.year, temp.month, temp.day)
 
     try:
         operations = [
