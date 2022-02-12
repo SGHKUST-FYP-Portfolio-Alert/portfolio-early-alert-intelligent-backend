@@ -14,7 +14,7 @@ def weighted_rolling_average(avgs: list, weights: list, decay=0.8):
             prev_r_avg = r_avgs[-1]
         
         r_weight = decay * prev_r_weight + weight
-        r_avg = (decay * prev_r_weight * prev_r_avg + avg * weight)/r_weight
+        r_avg = (decay * prev_r_weight * prev_r_avg + avg * weight)/(r_weight or 1)
 
         r_avgs.append(r_avg)
         r_weights.append(r_weight)
@@ -36,11 +36,14 @@ def aggregate_sentiments_daily():
     output = []
     for a in aggregated:
         results = sorted(a['results'], key= lambda x: x['date'])
-        avgs = [(r['sentiments'].get('1', 0) - r['sentiments'].get('-1', 0))/r['news_count'] for r in results]
-        weights = [r['news_count'] for r in results]
+        weights = [
+            r['sentiments'].get('1', 0) + r['sentiments'].get('-1', 0) + 0.25 * r['sentiments'].get('0', 0)
+        for r in results]
+        avgs = [
+            (r['sentiments'].get('1', 0) - r['sentiments'].get('-1', 0))/w
+        for r, w in zip(results, weights)]
         r_avgs, r_weights = weighted_rolling_average(avgs, weights)
-        for r, avg, r_avg, r_weight in zip(results, avgs, r_avgs, r_weights):
-            r['sentiments']['avg'] = avg
+        for r, r_avg, r_weight in zip(results, r_avgs, r_weights):
             r['sentiments']['rolling_avg'] = r_avg
             r['sentiments']['rolling_weight'] = r_weight
             r['counterparty'] = a['counterparty']
