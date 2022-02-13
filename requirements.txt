@@ -12,3 +12,4 @@ yfinance
 fastapi
 gensim
 nltk
+sklearn
