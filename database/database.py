@@ -98,16 +98,16 @@ def update_news(news_datum: List[dict]):
     news_collection.bulk_write(operations)
     return
 
-def get_news(filter, skip: int = 0, limit: int = 0, sort = False):
+def get_news(filter=None, projection=None, skip: int = 0, limit: int = 0, sort = False):
     if sort:
         return news_collection\
-            .find(filter)\
+            .find(filter, projection)\
             .sort('datetime', DESCENDING)\
             .skip(skip)\
             .limit(limit)
     else:
         return news_collection\
-            .find(filter)\
+            .find(filter, projection)\
             .skip(skip)\
             .limit(limit)
 

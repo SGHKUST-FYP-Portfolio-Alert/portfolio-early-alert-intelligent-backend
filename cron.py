@@ -116,7 +116,7 @@ def add_sentiment():
     batch_size = 1024   #infer news by batch to prevent infinite stuck when infer time >1 day
 
     while db.get_news(filter).count():
-        news_no_sentiment = list(db.get_news(filter, limit=batch_size))
+        news_no_sentiment = db.get_news(filter, projection="headline", limit=batch_size)
         sentModel.set_news(news_no_sentiment)
         infered_result = sentModel.infer()
         logger.info(f'infer of {len(infered_result)} news completed')
@@ -128,13 +128,20 @@ Adds keyword count to news articles without one.
 '''
 def add_news_keyword_count():
     logger.info("Start adding keyword count")
-    filter = {"keyword_count":{"$exists": False}}
-    news_no_keyword_count = list(db.get_news(filter))
+    
+    keyword_list_changed = False #TODO
+    if keyword_list_changed:
+        filter = {}
+    else:
+        filter = {'keyword_count': {'$exists': False}}
+
+    news_no_keyword_count = db.get_news(filter, projection=["headline", "summary"])
     result = [{
         '_id': news['_id'],
         'keyword_count': keyword_count(news['headline']+news['summary'])
     } for news in news_no_keyword_count]
     db.update_news(result)
+    logger.info(f'added keyword counts for {len(result)} news')
 
 
 '''
@@ -151,7 +158,7 @@ def add_lda():
     for counterparty in db.get_counterparties():
         if db.lda_collection.find_one({'counterpartyId': counterparty['_id']}) is None:
             filter = {'counterparty': counterparty['symbol']}
-            news = db.get_news(filter)
+            news = db.get_news(filter, projection=["headline", "summary"])
             sentences = [new['headline'] + ' ' + new['summary'] for new in news]
             model = get_lda(sentences)
             db.save_lda(counterparty['_id'], model)
