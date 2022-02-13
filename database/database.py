@@ -59,7 +59,7 @@ def add_counterparty_stock_candles(candles):
             UpsertOne(candle, keys=['counterpartyId', 'date'])  # use upsert instead of insert
             for candle in candles
         ]
-        result = counterparty_daily_stock_collection.bulk_write(operations)
+        result = counterparty_daily_stock_collection.bulk_write(operations, ordered=False)
     except Exception as e:
         logger.warning('Could not insert. Exception: '+str(e))
         return False
@@ -78,7 +78,7 @@ def add_news(news_datum: List[dict]):
         for news_data in news_datum
     ]  
 
-    news_collection.bulk_write(operations)
+    news_collection.bulk_write(operations, ordered=False)
     return
 
 def update_news(news_datum: List[dict]):
@@ -95,7 +95,7 @@ def update_news(news_datum: List[dict]):
         for news_data in news_datum
     ]
 
-    news_collection.bulk_write(operations)
+    news_collection.bulk_write(operations, ordered=False)
     return
 
 def get_news(filter=None, projection=None, skip: int = 0, limit: int = 0, sort = False):
@@ -125,7 +125,7 @@ def add_calculations(calculations: List[dict]):
         UpsertOne(calculation, keys = ['date', 'counterparty'])
         for calculation in calculations
     ]
-    return calculation_collection.bulk_write(operations)
+    return calculation_collection.bulk_write(operations, ordered=False)
 
 def get_calculations(filter):
     return calculation_collection\
