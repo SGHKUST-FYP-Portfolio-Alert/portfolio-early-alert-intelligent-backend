@@ -116,7 +116,7 @@ def add_sentiment():
     batch_size = 1024   #infer news by batch to prevent infinite stuck when infer time >1 day
 
     while db.get_news(filter).count():
-        news_no_sentiment = db.get_news(filter, projection="headline", limit=batch_size)
+        news_no_sentiment = list(db.get_news(filter, projection="headline", limit=batch_size))
         sentModel.set_news(news_no_sentiment)
         infered_result = sentModel.infer()
         logger.info(f'infer of {len(infered_result)} news completed')
