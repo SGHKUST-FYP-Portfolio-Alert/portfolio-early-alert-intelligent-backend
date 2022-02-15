@@ -1,3 +1,8 @@
+### Live site:
+https://fyp.cslix1.ml/
+
+### Running instructions:
+
 python version 3.8.x
 
 python -m pip install -r requirements.txt
