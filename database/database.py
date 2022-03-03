@@ -5,6 +5,7 @@ from pymongo import ASCENDING, DESCENDING, MongoClient, UpdateOne
 from pymongo.collection import ReturnDocument
 from database.database_helper import InsertIfNotExist, UpsertOne
 from datetime import datetime
+from bson.objectid import ObjectId
 
 client = MongoClient(
     "mongodb+srv://analytics:71mpmU8Lw5ngKhe6@cluster0.lln5s.mongodb.net/"
@@ -159,3 +160,20 @@ def get_lda(symbol: str):
         **result,
         'model': pickle.loads(result['model'])
     }
+
+def get_topics():
+    return database['topic'].find()
+
+
+def get_topic(id: ObjectId):
+    return database['topic'].find_one({
+        '_id': id
+    })
+
+
+def add_topic(topic: dict):
+    return database['topic'].insert_one(topic)
+
+
+def delete_topic(id: ObjectId):
+    return database['topic'].delete_one({'_id': id})

@@ -5,6 +5,7 @@ from routes.counterparty import router as CounterpartyRouter
 from routes.news import router as NewsRouter
 from routes.chart import router as ChartRouter
 from routes.lda import router as LdaRouter
+from routes.topic import router as TopicRouter
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,6 +38,7 @@ app.include_router(CounterpartyRouter, tags=["Counterparty"], prefix="/counterpa
 app.include_router(NewsRouter, tags=["News"], prefix="/news")
 app.include_router(ChartRouter, tags=["Calculation"], prefix="/chart")
 app.include_router(LdaRouter, tags=["LDA"], prefix="/lda")
+app.include_router(TopicRouter, tags=["Topic"], prefix="/topic")
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(
@@ -46,7 +48,7 @@ scheduler.add_job(
 scheduler.add_job(
     daily_update_calculation_cron,
     CronTrigger(hour='22'),   #trigger 6am (22utc) everyday.
-    next_run_time=datetime.now()
+    #next_run_time=datetime.now()
 )
 
 scheduler.start()
