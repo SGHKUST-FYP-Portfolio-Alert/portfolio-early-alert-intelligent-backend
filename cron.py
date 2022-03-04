@@ -119,10 +119,10 @@ def add_sentiment():
         news_no_sentiment = list(db.get_news(filter, projection=["headline"], limit=update_size))
 
         sentModel.set_news(news_no_sentiment)
-        infered_result = sentModel.infer()
+        inferred_result = sentModel.infer()
 
-        logger.info(f'infer of {len(infered_result)} news completed')
-        db.update_news(infered_result)
+        logger.info(f'infer of {len(inferred_result)} news completed')
+        db.update_news(inferred_result)
 
     logger.info("done")
 
