@@ -5,7 +5,6 @@ uvicorn
 finnhub-python
 apscheduler
 pandas
-pytorch-pretrained-bert
 torch
 coloredlogs
 yfinance
@@ -13,3 +12,4 @@ fastapi
 gensim
 nltk
 sklearn
+transformers

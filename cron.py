@@ -9,7 +9,7 @@ from database import database as db
 from ext_api import finnhub_wrapper, yahoo_finance
 from models.keywordModelling import keyword_count
 from models.ldaModel import get_lda
-from models.modelInfer import modelInfer
+from models.transformerInfer import transformerInfer
 
 logger = logging.getLogger(__name__)
 
@@ -105,7 +105,7 @@ def check_counterparty_status():
 '''
 Adds sentiment to news articles without one.
 '''
-sentModel = modelInfer(modelConfig)
+sentModel = transformerInfer(modelConfig)
 def add_sentiment():
     # start_dt = datetime(2021, 10, 14)
     # unix_start_dt = start_dt.replace(tzinfo=timezone.utc).timestamp()
@@ -113,14 +113,18 @@ def add_sentiment():
     # unix_end_dt = end_dt.replace(tzinfo=timezone.utc).timestamp()
     logger.info("Start adding sentiment")
     filter = {"sentiment":{"$exists": False}}
-    batch_size = 1024   #infer news by batch to prevent infinite stuck when infer time >1 day
+    update_size = 1024   #infer news by batch to prevent infinite stuck when infer time >1 day
 
     while db.get_news(filter).count():
-        news_no_sentiment = list(db.get_news(filter, projection=["headline"], limit=batch_size))
+        news_no_sentiment = list(db.get_news(filter, projection=["headline"], limit=update_size))
+
         sentModel.set_news(news_no_sentiment)
         infered_result = sentModel.infer()
+
         logger.info(f'infer of {len(infered_result)} news completed')
         db.update_news(infered_result)
+
+    logger.info("done")
 
 
 '''
