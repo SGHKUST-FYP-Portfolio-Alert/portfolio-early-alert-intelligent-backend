@@ -161,8 +161,8 @@ def get_lda(symbol: str):
         'model': pickle.loads(result['model'])
     }
 
-def get_topics():
-    return database['topic'].find()
+def get_topics(filter = None, projection = None):
+    return database['topic'].find(filter, projection)
 
 
 def get_topic(id: ObjectId):

@@ -103,7 +103,7 @@ def check_counterparty_status():
         logging.debug('counterparty status updated'+str(updated))
 
 '''
-Adds sentiment to news articles without one.
+Adds sentiment to news articles without one as well as give topic scores.
 '''
 sentModel = transformerInfer(modelConfig)
 def add_sentiment():

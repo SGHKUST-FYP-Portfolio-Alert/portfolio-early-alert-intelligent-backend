@@ -5,6 +5,7 @@ from transformers import BertForSequenceClassification, BertTokenizer
 
 import utils
 from database import database as db
+from calculations.topicScorer import topicScorer
 
 class transformerInfer:
     def __init__(self, config, news: List[dict] = None):
@@ -19,6 +20,8 @@ class transformerInfer:
 
         self.tokenizer = BertTokenizer.from_pretrained('yiyanghkust/finbert-tone')
         self.model = BertForSequenceClassification.from_pretrained('yiyanghkust/finbert-tone', num_labels=3).to(self.device)
+
+        self.topicScorer = topicScorer()
     
     '''
     Must use before using infer()
@@ -33,7 +36,7 @@ class transformerInfer:
 
     '''
     Infers all the news set in set_news()
-    Returns: list of dicts, each dict contains _id and sentiment (from -1 to 1)
+    Returns: list of dicts, each dict contains _id, sentiment (from -1 to 1) and ~topic_scores
     '''
     def infer(self) -> List[dict]:
         result_list = []
@@ -51,12 +54,9 @@ class transformerInfer:
             # topic tagging stuff (using concat rn, could use mean for perf) 
             last_layer = outputs.hidden_states[-1].detach().numpy() #(batch_size, max_token_len, 768)
             last_layer = last_layer.reshape(last_layer.shape[0], -1) #(batch_size, max_token_len*768)
-            self.score(last_layer)
+            topic_scores = self.topicScorer.score(last_layer)
 
-            result_list += [{'_id': data['_id'], 'sentiment': self.class2sent_map[classifications[i]]} for i, data in enumerate(news)]
+            sent = lambda i: self.class2sent_map[classifications[i]]
+            result_list += [{'_id': data['_id'], 'sentiment': sent(i), 'topic_scores': topic_scores[i]} for i, data in enumerate(news)]
         
         return result_list
-
-    def score(self, embedding):
-        pass
-        #TODO: document func (updated cron), ram usage, review all changes, clean up imports yo

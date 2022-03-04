@@ -11,7 +11,8 @@ router = APIRouter()
 @router.get("", response_model=List[Topic])
 def get_topics():
     result = []
-    for topic in db.get_topics():
+    filter = { 'keywords': {"$exists": True} }
+    for topic in db.get_topics(filter, projection={'embedding':False}):
         topic['id'] = str(topic['_id'])
         result.append(topic)
     print(topic)
