@@ -3,5 +3,5 @@ vocab = "finance-uncased"
 vocab_path = 'analyst_tone/vocab'
 pretrained_weights_path = "analyst_tone/pretrained_weights" # this is pre-trained FinBERT weights
 fine_tuned_weight_path = "analyst_tone/fine_tuned.pth"      # this is fine-tuned FinBERT weights
-max_seq_length=512
+max_seq_length=64
 device='cpu'
