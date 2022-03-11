@@ -103,17 +103,18 @@ def check_counterparty_status():
         logging.debug('counterparty status updated'+str(updated))
 
 '''
-Adds sentiment to news articles without one as well as give topic scores.
+Adds sentiment to news articles without one as well as topic scores and embedding.
 '''
-sentModel = transformerInfer(modelConfig)
 def add_sentiment():
+    sentModel = transformerInfer(modelConfig)
+
     # start_dt = datetime(2021, 10, 14)
     # unix_start_dt = start_dt.replace(tzinfo=timezone.utc).timestamp()
     # end_dt = datetime(2021, 10, 16)
     # unix_end_dt = end_dt.replace(tzinfo=timezone.utc).timestamp()
     logger.info("Start adding sentiment")
     filter = {"sentiment":{"$exists": False}}
-    update_size = 1024   #infer news by batch to prevent infinite stuck when infer time >1 day
+    update_size = 512 #infer news by batch to prevent infinite stuck, also affects num of embedding held in mem bf db update
 
     while db.get_news(filter).count():
         news_no_sentiment = list(db.get_news(filter, projection=["headline"], limit=update_size))

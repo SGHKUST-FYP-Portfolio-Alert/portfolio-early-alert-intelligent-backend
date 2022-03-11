@@ -5,4 +5,4 @@ pretrained_weights_path = "analyst_tone/pretrained_weights" # this is pre-traine
 fine_tuned_weight_path = "analyst_tone/fine_tuned.pth"      # this is fine-tuned FinBERT weights
 max_seq_length=64
 device='cpu'
-batch_size=16 # adjust based on available memory
+batch_size=8 # adjust based on available memory

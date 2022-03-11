@@ -56,7 +56,13 @@ class transformerInfer:
             last_layer = last_layer.reshape(last_layer.shape[0], -1) #(batch_size, max_token_len*768)
             topic_scores = self.topicScorer.score(last_layer)
 
+            # avg embedding (from word-based to sentence)
+            embeddings = np.mean(last_layer.reshape(self.max_token_len, 768, -1), axis=2) #(batch_size, 768)
+
             sent = lambda i: self.class2sent_map[classifications[i]]
-            result_list += [{'_id': data['_id'], 'sentiment': sent(i), 'topic_scores': topic_scores[i]} for i, data in enumerate(news)]
+            result_list += [{'_id': data['_id'],
+                            'sentiment': sent(i), 
+                            'topic_scores': topic_scores[i],
+                            'embedding': embeddings[i]} for i, data in enumerate(news)]
         
         return result_list
