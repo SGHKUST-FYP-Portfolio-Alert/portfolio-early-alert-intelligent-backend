@@ -3,6 +3,7 @@ from typing import List
 from sklearn.metrics.pairwise import cosine_similarity
 
 from database import database as db
+from schemas.topic import TopicCreate
 
 class topicScorer:
     def __init__(self):
@@ -32,3 +33,11 @@ class topicScorer:
             result.append(dict(zip(self.titles, score_mat[i])))
 
         return result
+
+    def add_topic(self, topic: TopicCreate):
+        self.titles.append(topic['title'])
+        self.embeddings.append(topic['embedding'])
+
+        db.add_topic(topic)
+
+scorer = topicScorer()

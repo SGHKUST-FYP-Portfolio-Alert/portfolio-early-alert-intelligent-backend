@@ -6,7 +6,7 @@ from pymongo.collection import ReturnDocument
 import models.config as modelConfig
 from calculations.aggregate import (aggregate_keywords_news_count_daily,
                                     aggregate_sentiments_daily)
-from calculations.topicScorer import topicScorer
+from calculations.topicScorer import scorer
 from database import database as db
 from ext_api import finnhub_wrapper, yahoo_finance
 from models.keywordModelling import keyword_count
@@ -107,7 +107,6 @@ def check_counterparty_status():
 '''
 Adds sentiment to news articles without one as well as topic scores and embedding.
 '''
-scorer = topicScorer()
 def add_sentiment():
     sentModel = transformerInfer(modelConfig, scorer)
 

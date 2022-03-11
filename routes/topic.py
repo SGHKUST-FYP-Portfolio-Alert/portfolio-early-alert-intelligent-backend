@@ -1,5 +1,9 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+import logging
+import numpy as np
+
+from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
+from calculations.topicScorer import scorer
 from database import database as db
 from schemas.topic import Topic, TopicCreate
 from typing import List
@@ -7,6 +11,7 @@ from ext_api.finnhub_wrapper import finnhub_client
 from bson.objectid import ObjectId
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 @router.get("", response_model=List[Topic])
 def get_topics():
@@ -30,14 +35,31 @@ def gen_topic_embed(topic: TopicCreate):
     regex = [f'\\b({x})\\b' for x in topic['keywords']]
     regex = '|'.join(regex)
 
-    # get all news with keywords in headline
-    cur = db.get_news({'headline': { '$regex': regex, '$options' : 'i' } })
+    #TODO: nltk similar words for each keyword
+
+    # get all news embedding with keywords in headline
+    cur = db.get_news({'headline': { '$regex': regex, '$options' : 'i' },
+                        'embedding': { '$exists': True } }, 
+                        projection={'_id':1, 'headline':1, 'embedding':1})
+
+    embedding = [news['embedding'] for news in list(cur)]
     
+    if len(embedding) <= 1:
+        logger.warning(f'Topic {topic["title"]} has less than 2 news matches')
+        return False
+
+    topic['embedding'] = np.mean(np.array(embedding), axis=0).tolist()
+
+    return topic
+
 @router.post("", status_code=201)
-def add_topic(topic: TopicCreate, background_tasks: BackgroundTasks):
+def add_topic(topic: TopicCreate):
     topic = jsonable_encoder(topic)
-    db.add_topic(topic)
-    background_tasks.add_task(gen_topic_embed, topic)
+    topic = gen_topic_embed(topic)
+    if topic:
+        scorer.add_topic(topic)
+    else:
+        raise HTTPException(status_code=400, detail='Topic embedding not generated')
 
 @router.put("")
 def update_topic(topic: Topic):
