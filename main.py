@@ -48,7 +48,7 @@ scheduler.add_job(
 scheduler.add_job(
     daily_update_calculation_cron,
     CronTrigger(hour='22'),   #trigger 6am (22utc) everyday.
-    next_run_time=datetime.now()
+    #next_run_time=datetime.now()
 )
 
 scheduler.start()
