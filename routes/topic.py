@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from fastapi.encoders import jsonable_encoder
 from database import database as db
 from schemas.topic import Topic, TopicCreate
@@ -25,10 +25,19 @@ def get_topic(id: str):
     result['id'] = str(result['_id'])
     return result
 
+def gen_topic_embed(topic: TopicCreate):
+    # regex: \b(keyword1)\b|\b(keyword2)\b/i
+    regex = [f'\\b({x})\\b' for x in topic['keywords']]
+    regex = '|'.join(regex)
+
+    # get all news with keywords in headline
+    cur = db.get_news({'headline': { '$regex': regex, '$options' : 'i' } })
+    
 @router.post("", status_code=201)
-def add_topic(topic: TopicCreate):
+def add_topic(topic: TopicCreate, background_tasks: BackgroundTasks):
     topic = jsonable_encoder(topic)
     db.add_topic(topic)
+    background_tasks.add_task(gen_topic_embed, topic)
 
 @router.put("")
 def update_topic(topic: Topic):
