@@ -8,7 +8,7 @@ from database import database as db
 from calculations.topicScorer import topicScorer
 
 class transformerInfer:
-    def __init__(self, config, news: List[dict] = None):
+    def __init__(self, config, topicScorer: topicScorer, news: List[dict] = None):
         self.news = news if news != None else []
 
         self.labels = config.labels
@@ -21,7 +21,7 @@ class transformerInfer:
         self.tokenizer = BertTokenizer.from_pretrained('yiyanghkust/finbert-tone')
         self.model = BertForSequenceClassification.from_pretrained('yiyanghkust/finbert-tone', num_labels=3).to(self.device)
 
-        self.topicScorer = topicScorer()
+        self.topicScorer = topicScorer
     
     '''
     Must use before using infer()

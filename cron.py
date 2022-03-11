@@ -2,9 +2,11 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 from pymongo.collection import ReturnDocument
-from calculations.aggregate import aggregate_keywords_news_count_daily, aggregate_sentiments_daily
 
 import models.config as modelConfig
+from calculations.aggregate import (aggregate_keywords_news_count_daily,
+                                    aggregate_sentiments_daily)
+from calculations.topicScorer import topicScorer
 from database import database as db
 from ext_api import finnhub_wrapper, yahoo_finance
 from models.keywordModelling import keyword_count
@@ -105,8 +107,9 @@ def check_counterparty_status():
 '''
 Adds sentiment to news articles without one as well as topic scores and embedding.
 '''
+scorer = topicScorer()
 def add_sentiment():
-    sentModel = transformerInfer(modelConfig)
+    sentModel = transformerInfer(modelConfig, scorer)
 
     # start_dt = datetime(2021, 10, 14)
     # unix_start_dt = start_dt.replace(tzinfo=timezone.utc).timestamp()
