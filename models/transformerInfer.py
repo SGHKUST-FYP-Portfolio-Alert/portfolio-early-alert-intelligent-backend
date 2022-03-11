@@ -63,6 +63,6 @@ class transformerInfer:
             result_list += [{'_id': data['_id'],
                             'sentiment': sent(i), 
                             'topic_scores': topic_scores[i],
-                            'embedding': embeddings[i]} for i, data in enumerate(news)]
+                            'embedding': embeddings[i].tolist()} for i, data in enumerate(news)]
         
         return result_list
