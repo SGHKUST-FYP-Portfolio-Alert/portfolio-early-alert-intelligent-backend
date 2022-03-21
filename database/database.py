@@ -1,5 +1,6 @@
 import pickle
 import logging
+import secret_keys
 from typing import List
 from pymongo import ASCENDING, DESCENDING, MongoClient, UpdateOne
 from pymongo.collection import ReturnDocument
@@ -8,7 +9,7 @@ from datetime import datetime
 from bson.objectid import ObjectId
 
 client = MongoClient(
-    "mongodb+srv://analytics:71mpmU8Lw5ngKhe6@cluster0.lln5s.mongodb.net/"
+    secret_keys.mongo_uri
 )
 
 logger = logging.getLogger(__name__)

@@ -4,10 +4,11 @@ from datetime import datetime, timedelta
 
 import finnhub
 import pandas as pd
+import secret_keys
 
 logger = logging.getLogger(__name__)
 
-finnhub_client = finnhub.Client(api_key="c59shsqad3i93kd215jg")
+finnhub_client = finnhub.Client(api_key=secret_keys.finnhub_api_key)
 
 def fetch_historical_stock_news(symbol, start_date = None):
 
