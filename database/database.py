@@ -178,3 +178,10 @@ def add_topic(topic: dict):
 
 def delete_topic(id: ObjectId):
     return database['topic'].delete_one({'_id': id})
+
+
+def add_alert(alert: dict):
+    try:
+        return database['alert'].insert_one(alert)
+    except:
+        return

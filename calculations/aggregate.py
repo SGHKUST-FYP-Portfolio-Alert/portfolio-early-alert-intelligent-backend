@@ -36,6 +36,7 @@ def aggregate_sentiments_daily():
     output = []
     for a in aggregated:
         results = sorted(a['results'], key= lambda x: x['date'])
+
         weights = [
             r['sentiments'].get('1', 0) + r['sentiments'].get('-1', 0) + 0.25 * r['sentiments'].get('0', 0)
         for r in results]
@@ -43,6 +44,9 @@ def aggregate_sentiments_daily():
             (r['sentiments'].get('1', 0) - r['sentiments'].get('-1', 0))/w
         for r, w in zip(results, weights)]
         r_avgs, r_weights = weighted_rolling_average(avgs, weights)
+
+        generate_sentiment_alert([r['date'] for r in results], r_avgs);
+        
         for r, r_avg, r_weight in zip(results, r_avgs, r_weights):
             r['sentiments']['rolling_avg'] = r_avg
             r['sentiments']['rolling_weight'] = r_weight
