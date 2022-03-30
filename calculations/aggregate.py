@@ -1,4 +1,5 @@
 from database import database as db
+from calculations.alertGenerator import alertGenerator
 
 def weighted_rolling_average(avgs: list, weights: list, decay=0.8):
 
@@ -45,7 +46,7 @@ def aggregate_sentiments_daily():
         for r, w in zip(results, weights)]
         r_avgs, r_weights = weighted_rolling_average(avgs, weights)
 
-        generate_sentiment_alert([r['date'] for r in results], r_avgs);
+        alertGenerator.generate_sentiment_alert(a['counterparty'], [r['date'] for r in results], r_avgs)
         
         for r, r_avg, r_weight in zip(results, r_avgs, r_weights):
             r['sentiments']['rolling_avg'] = r_avg
