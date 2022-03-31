@@ -181,7 +181,13 @@ def delete_topic(id: ObjectId):
 
 
 def add_alert(alert: dict):
-    try:
+    
+    keys = ["class", "counterparty", "date", "type"]
+    check_duplicate_filter = { key: alert[key] for key in keys }
+    if database['alert'].find_one(check_duplicate_filter) is None:
         return database['alert'].insert_one(alert)
-    except:
-        return
+
+
+def get_alerts(filter: dict):
+    print(filter)
+    return database['alert'].find(filter)
