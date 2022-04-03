@@ -189,4 +189,9 @@ def add_alert(alert: dict):
 
 
 def get_alerts(filter: dict):
-    return database['alert'].find(filter)
+    return database['alert'].find(filter)\
+        .sort({
+            'class': ASCENDING,
+            'date': DESCENDING,
+            'percentile': ASCENDING
+        })
