@@ -189,5 +189,4 @@ def add_alert(alert: dict):
 
 
 def get_alerts(filter: dict):
-    print(filter)
     return database['alert'].find(filter)
