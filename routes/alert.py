@@ -21,7 +21,6 @@ def get_alerts(counterparty: str = None, date: str = None):
 
     result = []
     for alert in db.get_alerts(alert_filter):
-        print(alert)
         alert['id'] = str(alert['_id'])
         del alert['_id']
         result.append(alert)

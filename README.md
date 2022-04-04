@@ -25,6 +25,6 @@ unzip it and put the folder inside the portfolio-early-alert-intelligent-backend
 
 ### Server info:
 ssh root@178.128.29.144
-password: SocGen2122FYP
+password: ***
 
 project directory: /root/fyp/
