@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from typing import List
 from database import database as db
 from schemas.alert import Alert
-from datetime import datetime, date as dtdate, timedelta
+from datetime import datetime, timedelta
 
 router = APIRouter()
 
@@ -14,8 +14,7 @@ def get_alerts(counterparty: str = None, date: str = None, detailed: bool = Fals
     if counterparty is not None:
         alert_filter['counterparty'] =  counterparty
     
-        if date is None:
-            date = dtdate.today().isoformat()
+    if date is not None:
         alert_filter['date'] = {
             '$lte': datetime.fromisoformat(date),
             '$gte': datetime.fromisoformat(date) - timedelta(days=5)
