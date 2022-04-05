@@ -30,6 +30,12 @@ class AlertGenerator:
             (df['score_percentile'] > 1-self.percentile_cutoff)
         ]
 
+        low_percentiles['d_date'] = low_percentiles['date'].diff().fillna(timedelta(99))
+        low_percentiles = low_percentiles[low_percentiles['d_date'] > timedelta(days=1)] #eliminate consecutive alert
+
+        high_percentiles['d_date'] = high_percentiles['date'].diff().fillna(timedelta(99))
+        high_percentiles = high_percentiles[high_percentiles['d_date'] > timedelta(days=1)] #eliminate consecutive alert
+
         for _, row in low_percentiles.iterrows():
             db.add_alert({
                 'date': row['date'],
