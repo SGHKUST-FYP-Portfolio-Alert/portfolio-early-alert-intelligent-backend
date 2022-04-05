@@ -191,8 +191,8 @@ def add_alert(alert: dict):
 def get_alerts(filter: dict, skip: int = 0, limit: int=0):
     return database['alert'].find(filter)\
         .sort([
-            ('category', ASCENDING),
             ('date', DESCENDING),
+            ('category', ASCENDING),
             ('percentile', ASCENDING)
         ])\
         .skip(skip)\
