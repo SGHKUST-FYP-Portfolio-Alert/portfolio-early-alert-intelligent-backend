@@ -10,6 +10,16 @@ logger = logging.getLogger(__name__)
 
 finnhub_client = finnhub.Client(api_key=secret_keys.finnhub_api_key)
 
+def try_again_if_error(func, max_attempts=2):
+    def decorate(*args, **kwargs):
+       for attempts in range(max_attempts+1):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                if attempts == max_attempts:
+                    raise(e)
+    return decorate
+
 def fetch_historical_stock_news(symbol, start_date = None):
 
     news = []
@@ -31,7 +41,9 @@ def fetch_historical_stock_news(symbol, start_date = None):
 
         time.sleep(1)
         
-        new_news = finnhub_client.company_news(symbol, _from=start_date.isoformat(), to=end_date.isoformat())
+        new_news = try_again_if_error(finnhub_client.company_news)(
+            symbol, _from=start_date.isoformat(), to=end_date.isoformat()
+        )
         news += new_news
     
     if not news:

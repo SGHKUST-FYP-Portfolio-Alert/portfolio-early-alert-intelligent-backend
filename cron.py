@@ -66,10 +66,9 @@ def ingest_news(date, args):
     logger.debug("Ingest news")
     counterparty = args['symbol']
     logger.debug("Start ingesting news for "+counterparty)
-
-    news = finnhub_wrapper.fetch_historical_stock_news(counterparty, date)
     
     try:
+        news = finnhub_wrapper.fetch_historical_stock_news(counterparty, date)
         db.add_news(news)
     except Exception as e:
         logger.error("New ingest failed for "+counterparty, e)
