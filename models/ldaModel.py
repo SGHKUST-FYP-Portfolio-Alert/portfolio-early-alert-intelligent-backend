@@ -77,7 +77,6 @@ def advanced_lda_model (sentences, num_topic_words = 10, num_topics = 10):
     return topics
 
 def get_lda(sentences, num_topics=20):
-    sentences = sentences.map(lambda x: re.sub(r'[,\.!?]', '', x))
     docs = list(sents_to_words(sentences))
 
     docs = remove_stopwords(docs)
