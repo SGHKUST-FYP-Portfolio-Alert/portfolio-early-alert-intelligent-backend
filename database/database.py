@@ -132,7 +132,7 @@ def add_calculations(calculations: List[dict]):
 def get_calculations(filter, limit=0):
     return calculation_collection\
         .find(filter)\
-        .sort('date', ASCENDING)\
+        .sort('date', DESCENDING)\
         .limit(limit)
 
 def save_lda(counterpartyId, model):
