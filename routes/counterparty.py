@@ -16,9 +16,20 @@ def get_counterparties(symbol: str = None, detailed=False):
         filter['symbol'] = symbol
     
     result = []
+
+    latest_calculations = {}
+    if detailed:
+        query = db.database['calculation'].aggregate([
+            {'$match': {'counterparty': symbol} if symbol else {}},
+            {'$sort': {'date': -1}},
+            {'$group': {'_id': '$counterparty', 'data': {'$first': '$$CURRENT'} }},
+        ])
+        for q in query:
+            latest_calculations[q['_id']] = q['data']
+
     for counterparty in db.get_counterparties(filter):
         if detailed:
-            counterparty['data'] = next(db.get_calculations({'counterparty': counterparty['symbol']}).limit(1), None)
+            counterparty['data'] = latest_calculations.get(counterparty['symbol'], None)
         result.append(counterparty)
     
     return result
