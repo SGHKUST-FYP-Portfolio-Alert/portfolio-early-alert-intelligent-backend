@@ -8,14 +8,20 @@ from ext_api.finnhub_wrapper import finnhub_client
 
 router = APIRouter()
 
-@router.get("", response_model=List[Counterparty])
-def get_counterparties():
-    return list(db.get_counterparties())
+@router.get("", response_model=List[Counterparty], response_model_exclude_none=True)
+def get_counterparties(symbol: str = None, detailed=False):
 
-@router.get("/", response_model=Counterparty)
-def get_counterparty(symbol: str):
-    filter = { 'symbol': symbol }
-    return db.get_counterparty(filter)
+    filter = {}
+    if symbol:
+        filter['symbol'] = symbol
+    
+    result = []
+    for counterparty in db.get_counterparties(filter):
+        if detailed:
+            counterparty['data'] = next(db.get_calculations({'counterparty': counterparty['symbol']}).limit(1), None)
+        result.append(counterparty)
+    
+    return result
 
 
 @router.post("", response_model=Counterparty, status_code=201)

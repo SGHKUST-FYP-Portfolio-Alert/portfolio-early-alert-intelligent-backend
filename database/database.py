@@ -29,8 +29,8 @@ def add_counterparty(counterparty: dict):
     return counterparty_collection.find_one({'_id': result.inserted_id})
 
 
-def get_counterparties():
-    return counterparty_collection.find()
+def get_counterparties(filter: dict = {}):
+    return counterparty_collection.find(filter)
 
 def get_counterparty(filter: dict = {}):
     return counterparty_collection.find_one(filter)
@@ -129,11 +129,11 @@ def add_calculations(calculations: List[dict]):
     ]
     return calculation_collection.bulk_write(operations, ordered=False)
 
-def get_calculations(filter):
+def get_calculations(filter, limit=0):
     return calculation_collection\
         .find(filter)\
-        .sort('date', ASCENDING)
-
+        .sort('date', ASCENDING)\
+        .limit(limit)
 
 def save_lda(counterpartyId, model):
     data = { 

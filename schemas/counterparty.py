@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from schemas.chart import CalculationData
 
 class CounterpartyBase(BaseModel):
     name: str
@@ -9,4 +10,4 @@ class CounterpartyCreate(CounterpartyBase):
     pass
 
 class Counterparty(CounterpartyBase):
-    pass
+    data: Optional[CalculationData] = None
