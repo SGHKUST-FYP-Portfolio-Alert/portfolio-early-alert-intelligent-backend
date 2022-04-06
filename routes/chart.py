@@ -11,7 +11,9 @@ router = APIRouter()
 @router.get("/calculation", response_model=List[CalculationData], response_model_exclude_none=True)
 def get_calculations(counterparty: str):
     filter = {"counterparty": counterparty}
-    return list(db.get_calculations(filter)).reverse()
+    result = list(db.get_calculations(filter))
+    result.reverse()
+    return result
 
 
 @router.get("/price", response_model=List[PriceData])
