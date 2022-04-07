@@ -8,7 +8,7 @@ from bson.objectid import ObjectId
 
 router = APIRouter()
 
-@router.get("", response_model=List[Alert])
+@router.get("", response_model=List[Alert], response_model_exclude_none=True)
 def get_alerts(counterparty: str = None, date: str = None, dashboard: bool = False, skip: int = 0, limit: int = 0):
     alert_filter = {}
     
@@ -38,7 +38,7 @@ def get_alerts(counterparty: str = None, date: str = None, dashboard: bool = Fal
 
 @router.put("", status_code=201)
 def update_alerts(id: str, alert: dict):
-    db.database['alerts'].find_one_and_update(
+    db.database['alert'].find_one_and_update(
         {'_id': ObjectId(id)},
         {'$set': alert}
     )
