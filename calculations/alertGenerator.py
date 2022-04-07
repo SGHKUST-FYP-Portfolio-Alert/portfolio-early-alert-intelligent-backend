@@ -6,6 +6,7 @@ class AlertGenerator:
     
     def __init__(self):
         self.percentile_cutoff = 0.05
+        self.normalizing_percentile_cutoff = 0.1
         pass
 
     def generate_sentiment_alert(self, counterparty, dates: list, scores: list):
@@ -14,7 +15,7 @@ class AlertGenerator:
         
         df['d_score1'] = df['score'].diff()
         df['d_score2'] = df['score'].diff(periods=2)
-        df['d_score3'] = df['score'].diff(periods=3)
+        df['d_score3'] = df['score'].diff(periods=4)
         df['d_score'] = df[['d_score1', 'd_score2', 'd_score3']].mean(axis=1)
         df.dropna(inplace=True)
         df['score_percentile'] = df['score'].rank(pct=True)
@@ -23,18 +24,12 @@ class AlertGenerator:
 
         low_percentiles = df[
             (df['d_score_percentile'] < self.percentile_cutoff) &
-            (df['score_percentile'] < self.percentile_cutoff)
+            (df['score_percentile'] < self.normalizing_percentile_cutoff)
         ]
         high_percentiles = df[
             (df['d_score_percentile'] > 1-self.percentile_cutoff) &
-            (df['score_percentile'] > 1-self.percentile_cutoff)
+            (df['score_percentile'] > 1-self.normalizing_percentile_cutoff)
         ]
-
-        low_percentiles['d_date'] = low_percentiles['date'].diff().fillna(timedelta(99))
-        low_percentiles = low_percentiles[low_percentiles['d_date'] > timedelta(days=1)] #eliminate consecutive alert
-
-        high_percentiles['d_date'] = high_percentiles['date'].diff().fillna(timedelta(99))
-        high_percentiles = high_percentiles[high_percentiles['d_date'] > timedelta(days=1)] #eliminate consecutive alert
 
         for _, row in low_percentiles.iterrows():
             db.add_alert({

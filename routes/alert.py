@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 router = APIRouter()
 
 @router.get("", response_model=List[Alert])
-def get_alerts(counterparty: str = None, date: str = None, detailed: bool = False, skip: int = 0, limit: int = 0):
+def get_alerts(counterparty: str = None, date: str = None, dashboard: bool = False, skip: int = 0, limit: int = 0):
     alert_filter = {}
     
     if counterparty is not None:
@@ -21,11 +21,15 @@ def get_alerts(counterparty: str = None, date: str = None, detailed: bool = Fals
         }
 
     result = []
+    counterparties = []
 
     for alert in db.get_alerts(alert_filter, limit=limit, skip=skip):
         alert['id'] = str(alert['_id'])
         del alert['_id']
-        if detailed:
+        if dashboard:
+            if alert['counterparty'] in counterparties:
+                continue # only return newest alert for each counterparty for dashboard view
+            counterparties.append(alert['counterparty'])
             alert['counterparty'] = db.get_counterparty({'symbol': alert['counterparty']})
         result.append(alert)
     
