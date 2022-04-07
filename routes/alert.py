@@ -4,6 +4,7 @@ from typing import List
 from database import database as db
 from schemas.alert import Alert
 from datetime import datetime, timedelta
+from bson.objectid import ObjectId
 
 router = APIRouter()
 
@@ -34,4 +35,10 @@ def get_alerts(counterparty: str = None, date: str = None, dashboard: bool = Fal
         result.append(alert)
     
     return result
-    
+
+@router.put("", status_code=201)
+def update_alerts(id: str, alert: dict):
+    db.database['alerts'].find_one_and_update(
+        {'_id': ObjectId(id)},
+        {'$set': alert}
+    )
