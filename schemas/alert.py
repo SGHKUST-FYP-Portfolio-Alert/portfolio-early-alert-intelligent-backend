@@ -1,4 +1,5 @@
 from datetime import datetime
+from xmlrpc.client import Boolean
 from pydantic import BaseModel
 from typing import Optional, Union
 from schemas.counterparty import Counterparty
@@ -12,3 +13,4 @@ class Alert(BaseModel):
     counterparty: Union[str, Counterparty]
     value: float
     percentile: float
+    feedback: Optional[Boolean]
