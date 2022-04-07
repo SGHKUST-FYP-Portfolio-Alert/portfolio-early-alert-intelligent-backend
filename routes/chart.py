@@ -21,6 +21,9 @@ def get_prices(counterparty: str):
     counterparty_status = db.get_one_counterparty_ingest_status({'symbolRef': counterparty})
     if counterparty_status:
         stock_data =  db.get_counterparty_stock_candles({'counterpartyId': counterparty_status['counterpartyId']})
-        stock_data = [{'Close': x['Close'], 'date': x['date'].strftime('%Y-%m-%d')} for x in stock_data]
+        stock_data = [{ 
+            'date': x['date'].strftime('%Y-%m-%d'),
+            'price': [ x['Open'], x['High'], x['Low'], x['Close'] ]
+        } for x in stock_data]
         stock_data.reverse() #date in ascending order
         return stock_data

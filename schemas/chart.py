@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 class CalculationData(BaseModel):
     date: str #format: 2021-12-06
@@ -9,4 +9,4 @@ class CalculationData(BaseModel):
 
 class PriceData(BaseModel):
     date: str
-    Close: float
+    price: List[float]
