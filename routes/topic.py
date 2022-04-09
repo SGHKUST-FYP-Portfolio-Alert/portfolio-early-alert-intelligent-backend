@@ -35,8 +35,6 @@ def gen_topic_embed(topic: TopicCreate):
     regex = [f'\\b({x})\\b' for x in topic['keywords']]
     regex = '|'.join(regex)
 
-    #TODO: nltk similar words for each keyword
-
     # get all news embedding with keywords in headline
     cur = db.get_news({'headline': { '$regex': regex, '$options' : 'i' },
                         'embedding': { '$exists': True } }, 
