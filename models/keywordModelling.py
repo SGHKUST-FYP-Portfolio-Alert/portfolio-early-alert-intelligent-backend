@@ -35,7 +35,7 @@ def keyword_count (news):
         synonyms = set()
         for syn in wordnet.synsets(keyword):
             for l in syn.lemmas():
-                synonyms.append(l.name())
+                synonyms.add(l.name())
         for keyword_synonym in synonyms:
             keyword_synonym = keyword_synonym.lower()
             if keyword_synonym in news:
