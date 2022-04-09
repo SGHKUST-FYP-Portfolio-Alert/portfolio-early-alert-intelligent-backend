@@ -24,7 +24,11 @@ def weighted_rolling_average(avgs: list, weights: list, decay=0.8):
 
 def aggregate_sentiments_daily():
     
+    counterparties = [ 
+        c['symbol'] for c in db.database['counterparty'].find(projection=['symbol'])
+    ]
     pipeline = [
+        { '$match': {'counterparty': {'$in': counterparties}}},
         {'$group': {'_id': { 'date': '$date', 'counterparty': '$counterparty', 'sentiment': '$sentiment'}, 'count':{'$sum':1}}},
         {'$group': {'_id': {'date':'$_id.date', 'counterparty':'$_id.counterparty'}, 'news_count': {'$sum': '$count'}, 'sentiments': {'$addToSet' : {'k': {'$toString': '$_id.sentiment'}, 'v':'$count'}}}},
         {'$project': {'_id': 0, 'date':'$_id.date', 'counterparty':'$_id.counterparty', 'news_count': 1, 'sentiments': {'$arrayToObject': '$sentiments'} }},
@@ -61,7 +65,11 @@ def aggregate_sentiments_daily():
 
 def aggregate_keywords_news_count_daily():
 
+    counterparties = [ 
+        c['symbol'] for c in db.database['counterparty'].find(projection=['symbol'])
+    ]
     pipeline = [
+        { '$match': {'counterparty': {'$in': counterparties}}},
         { '$addFields': {'keywords': {'$objectToArray': '$keyword_count'}} },
         { '$unwind': '$keywords'},
         { '$group': {
