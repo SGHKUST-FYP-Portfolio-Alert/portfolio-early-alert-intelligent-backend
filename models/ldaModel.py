@@ -77,6 +77,8 @@ def advanced_lda_model (sentences, num_topic_words = 10, num_topics = 10):
     return topics
 
 def get_lda(sentences, num_topics=20):
+    if len(sentences) == 0:
+        return None
     docs = list(sents_to_words(sentences))
 
     docs = remove_stopwords(docs)

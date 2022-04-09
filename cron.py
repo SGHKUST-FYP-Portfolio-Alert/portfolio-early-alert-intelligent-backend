@@ -167,5 +167,6 @@ def add_lda():
             news = db.get_news(filter, projection=["headline", "summary"])
             sentences = [new['headline'] + ' ' + new['summary'] for new in news]
             model = get_lda(sentences)
-            db.save_lda(counterparty['_id'], model)
-            logger.info(f'lda added for {counterparty["symbol"]}')
+            if model:
+                db.save_lda(counterparty['_id'], model)
+                logger.info(f'lda added for {counterparty["symbol"]}')

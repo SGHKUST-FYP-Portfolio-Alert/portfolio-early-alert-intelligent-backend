@@ -37,6 +37,7 @@ def get_counterparty(filter: dict = {}):
 
 def delete_counterparty(symbol: str):
     result = counterparty_collection.delete_one({'symbol': symbol})
+    database['alert'].delete_many({'counterparty': symbol})
     return result.deleted_count
 
 
