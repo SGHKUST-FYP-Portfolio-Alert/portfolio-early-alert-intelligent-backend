@@ -31,6 +31,10 @@ def get_alerts(counterparty: str = None, date: str = None, dashboard: bool = Fal
             if alert['counterparty'] in counterparties:
                 continue # only return newest alert for each counterparty for dashboard view
             counterparties.append(alert['counterparty'])
+            alert['data'] = next(
+                db.get_calculations({'counterparty': alert['counterparty'], 'date': alert['date'].strftime("%Y-%m-%d")}),
+                None
+            )
             alert['counterparty'] = db.get_counterparty({'symbol': alert['counterparty']})
         result.append(alert)
     
