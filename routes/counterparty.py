@@ -1,8 +1,9 @@
+from xmlrpc.client import boolean
 from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pymongo.errors import DuplicateKeyError
 from database import database as db
-from schemas.counterparty import CounterpartyCreate, Counterparty
+from schemas.counterparty import CounterpartyCreate, Counterparty, CounterpartyBase
 from typing import List
 from ext_api.finnhub_wrapper import finnhub_client
 
@@ -53,6 +54,12 @@ def delete_counterparty(symbol: str):
         raise HTTPException(status_code=404, detail="Counterparty not found")
 
 
-@router.get("/search")
-def search_counterparties(query: str):
-    return finnhub_client.symbol_lookup(query)
+@router.get("/search", response_model=List[CounterpartyBase])
+def search_counterparties(query: str, new: boolean = False):
+    if new:
+        return [
+            {'symbol': c['symbol'], 'name': c['description']}
+            for c in finnhub_client.symbol_lookup(query)['result']
+        ]
+    else:
+        return list(db.get_counterparties({'$text': {'$search': query}}))
