@@ -7,6 +7,7 @@ from routes.chart import router as ChartRouter
 from routes.lda import router as LdaRouter
 from routes.topic import router as TopicRouter
 from routes.alert import router as AlertRouter
+from routes.overview import router as OverviewRouter
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi.middleware.cors import CORSMiddleware
@@ -41,6 +42,7 @@ app.include_router(ChartRouter, tags=["Calculation"], prefix="/chart")
 app.include_router(LdaRouter, tags=["LDA"], prefix="/lda")
 app.include_router(TopicRouter, tags=["Topic"], prefix="/topic")
 app.include_router(AlertRouter, tags=["Alert"], prefix="/alert")
+app.include_router(OverviewRouter, tags=["Overview"], prefix="/overview")
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(
