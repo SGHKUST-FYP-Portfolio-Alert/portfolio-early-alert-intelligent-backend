@@ -11,20 +11,6 @@ keywords = ["Ownership Change", "Change of Control", "Acceleration", "Accelerate
         "LBO", "Qualified audit opinion", "Regulatory Breach", "Non-performing Assets", "Provisions", "Force majeur", "Distress", "Frozen", \
         "Delisted", "Sued", "Suit", "Arrested", "Disappeared", "Uncontactable"]
 
-# def keyword_count (news):
-    
-#     keywords_count_dict = {}
-    
-#     for keyword in keywords:
-#         keyword = keyword.lower()
-#         news = news.lower()
-#         if keyword in news:
-#             keywords_count_dict[keyword] = keywords_count_dict.get(keyword, 0) + 1
-
-
-    
-#     return keywords_count_dict
-
 def keyword_count (news):
     
     keywords_count_dict = {}
@@ -32,15 +18,29 @@ def keyword_count (news):
     for keyword in keywords:
         keyword = keyword.lower()
         news = news.lower()
-        synonyms = set()
-        for syn in wordnet.synsets(keyword):
-            for l in syn.lemmas():
-                synonyms.add(l.name())
-        for keyword_synonym in synonyms:
-            keyword_synonym = keyword_synonym.lower()
-            if keyword_synonym in news:
-                keywords_count_dict[keyword] = keywords_count_dict.get(keyword, 0) + 1
+        if keyword in news:
+            keywords_count_dict[keyword] = keywords_count_dict.get(keyword, 0) + 1
 
 
     
     return keywords_count_dict
+
+# def keyword_count (news):
+    
+#     keywords_count_dict = {}
+    
+#     for keyword in keywords:
+#         keyword = keyword.lower()
+#         news = news.lower()
+#         synonyms = set()
+#         for syn in wordnet.synsets(keyword):
+#             for l in syn.lemmas():
+#                 synonyms.add(l.name())
+#         for keyword_synonym in synonyms:
+#             keyword_synonym = keyword_synonym.lower()
+#             if keyword_synonym in news:
+#                 keywords_count_dict[keyword] = keywords_count_dict.get(keyword, 0) + 1
+
+
+    
+#     return keywords_count_dict
