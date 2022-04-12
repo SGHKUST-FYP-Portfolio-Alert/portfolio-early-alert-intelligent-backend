@@ -9,16 +9,16 @@ from bson.objectid import ObjectId
 router = APIRouter()
 
 @router.get("", response_model=List[Alert], response_model_exclude_none=True)
-def get_alerts(counterparty: str = None, date: str = None, dashboard: bool = False, skip: int = 0, limit: int = 0):
+def get_alerts(counterparty: str = None, date_from: str = None, date_to: str =None, dashboard: bool = False, skip: int = 0, limit: int = 0):
     alert_filter = {}
     
     if counterparty is not None:
         alert_filter['counterparty'] =  counterparty
     
-    if date is not None:
+    if (date_from is not None) and (date_to is not None):
         alert_filter['date'] = {
-            '$lte': datetime.fromisoformat(date),
-            '$gte': datetime.fromisoformat(date) - timedelta(days=5)
+            '$lte': datetime.fromisoformat(date_to),
+            '$gte': datetime.fromisoformat(date_from)
         }
 
     result = []

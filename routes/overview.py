@@ -15,7 +15,7 @@ def get_overview(date: str = None):
     filter = {}
     if date:
         filter['date'] = {
-            '$lte': date.strftime('%Y-%m-%d'),
+            '$lte': date,
             '$gte': (datetime.fromisoformat(date) - timedelta(5)).strftime('%Y-%m-%d')
         }
     else:
