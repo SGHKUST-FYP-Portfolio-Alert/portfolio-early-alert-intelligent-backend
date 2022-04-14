@@ -41,7 +41,7 @@ Params:
     id (optional XOR): str, the id of the topic
 
 Returns:
-    list of news dicts: [{'headline': 'headline', 'score': 0.5}, ...]
+    list of news dicts: [{'_id': str, headline': str, 'score': float}, ...]
 '''
 @router.get("/get_articles") #TODO: reponse model
 def get_topic_articles(sim_threshold: float, counterparty: str, date: str, title: str = None, id: str = None):
