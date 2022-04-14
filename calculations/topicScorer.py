@@ -34,10 +34,19 @@ class topicScorer:
 
         return result
 
+    '''
+    Add topics to backend db as well as to scorer (the intermediary cache object for scoring)
+    Returns:
+        bool: Success (topic title unique)
+    '''
     def add_topic(self, topic: TopicCreate):
+        if topic['title'] in self.titles:
+            return False
+
         self.titles.append(topic['title'])
         self.embeddings.append(topic['embedding'])
 
         db.add_topic(topic)
+        return True
 
 scorer = topicScorer()

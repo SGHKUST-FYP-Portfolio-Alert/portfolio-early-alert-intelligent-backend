@@ -20,7 +20,6 @@ def get_topics():
     for topic in db.get_topics(filter, projection={'embedding':False}):
         topic['id'] = str(topic['_id'])
         result.append(topic)
-    print(topic)
     return result
 
 @router.get("/", response_model=Topic)
@@ -55,7 +54,9 @@ def add_topic(topic: TopicCreate):
     topic = jsonable_encoder(topic)
     topic = gen_topic_embed(topic)
     if topic:
-        scorer.add_topic(topic)
+        res = scorer.add_topic(topic)
+        if not res:
+            raise HTTPException(status_code=400, detail='Topic name already exists')
     else:
         raise HTTPException(status_code=400, detail='Topic embedding not generated')
 
