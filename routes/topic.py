@@ -29,6 +29,40 @@ def get_topic(id: str):
     result['id'] = str(result['_id'])
     return result
 
+'''use this sparingly lol, i coded this to be used for testing'''
+@router.get("/get_articles") #TODO: reponse model
+def get_topic_articles(sim_threshold: float, counterparty: str, date: str, title: str = None, id: str = None):
+    if title is None and id is None:
+        raise HTTPException(status_code=400, detail='Must provide either title or id')
+    
+    # get title from db if id is provided
+    if id is not None:
+        id = ObjectId(id)
+        topic = db.get_topic(id=id)
+
+        if topic is None:
+            raise HTTPException(status_code=404, detail='Topic not found')
+
+        title = topic['title']
+
+    # get all news from symbols from that date
+    proj = {'_id':1, 'headline':1, 'embedding':1}
+    all_news = list(db.get_news({'counterparty': counterparty, 'date': date}, projection=proj))
+    if not all_news or len(all_news) == 0:
+        raise HTTPException(status_code=404, detail='No news found')
+
+    scores = scorer.score([news['embedding'] for news in all_news], title)
+    if not scores:
+        raise HTTPException(status_code=404, detail='Topic not found')
+    
+    ret = []
+    for i, score in enumerate(scores):
+        score = list(score.values())[0]
+        if score > sim_threshold:
+            ret.append({'_id': str(all_news[i]['_id']), 'headline': all_news[i]['headline'], 'score': score})
+
+    return ret
+
 def gen_topic_embed(topic: TopicCreate):
     # regex: \b(keyword1)\b|\b(keyword2)\b/i
     regex = [f'\\b({x})\\b' for x in topic['keywords']]
