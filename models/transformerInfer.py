@@ -49,18 +49,19 @@ class transformerInfer:
             outputs = self.model(**inputs, output_hidden_states=True)
 
             # 1d array of batch_size, each classified from 0 to 2
-            classifications = np.argmax(outputs[0].detach().numpy(), axis=1)
+            classifications = np.argmax(outputs[0].detach().cpu().numpy(), axis=1)
             
             # topic tagging stuff (using concat rn, could use mean for perf) 
-            last_layer = outputs.hidden_states[-1].detach().numpy() #(batch_size, max_token_len, 768)
+            last_layer = outputs.hidden_states[-1].detach().cpu().numpy() #(batch_size, max_token_len, 768)
             last_layer = last_layer.reshape(last_layer.shape[0], -1) #(batch_size, max_token_len*768)
             topic_scores = self.topicScorer.score(last_layer)
 
             # avg embedding (from word-based to sentence)
-            embeddings = np.mean(last_layer.reshape(self.max_token_len, 768, -1), axis=2) #(batch_size, 768)
+            embeddings = np.mean(last_layer.reshape(last_layer.shape[0], 768, -1), axis=2) #(batch_size, 768)
 
             sent = lambda i: self.class2sent_map[classifications[i]]
             result_list += [{'_id': data['_id'],
+                            'v2': True,
                             'sentiment': sent(i), 
                             'topic_scores': topic_scores[i],
                             'embedding': embeddings[i].tolist()} for i, data in enumerate(news)]
