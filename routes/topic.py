@@ -29,7 +29,20 @@ def get_topic(id: str):
     result['id'] = str(result['_id'])
     return result
 
-'''use this sparingly lol, i coded this to be used for testing'''
+'''
+Don't know how scalable this route is
+Generates and returns scores for one topic, for all news of a counterparty on a given date, higher than a given score
+
+Params:
+    sim_threshold: float, similarity threshold (with 1 being most similar), articles below threshold are not returned
+    counterparty: str, the symbol, e.g. TSLA
+    date: str, date in format YYYY-MM-DD, e.g. 2021-07-29
+    title (optional XOR): str, the title of the topic
+    id (optional XOR): str, the id of the topic
+
+Returns:
+    list of news dicts: [{'headline': 'headline', 'score': 0.5}, ...]
+'''
 @router.get("/get_articles") #TODO: reponse model
 def get_topic_articles(sim_threshold: float, counterparty: str, date: str, title: str = None, id: str = None):
     if title is None and id is None:
