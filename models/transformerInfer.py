@@ -61,6 +61,7 @@ class transformerInfer:
 
             sent = lambda i: self.class2sent_map[classifications[i]]
             result_list += [{'_id': data['_id'],
+                            'v2': True,
                             'sentiment': sent(i), 
                             'topic_scores': topic_scores[i],
                             'embedding': embeddings[i].tolist()} for i, data in enumerate(news)]

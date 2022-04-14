@@ -114,7 +114,7 @@ def add_sentiment():
     # end_dt = datetime(2021, 10, 16)
     # unix_end_dt = end_dt.replace(tzinfo=timezone.utc).timestamp()
     logger.info("Start adding sentiment")
-    filter = {"embedding":{"$exists": False}}
+    filter = {"sentiment":{"$exists": False}}
     update_size = 512 #infer news by batch to prevent infinite stuck, also affects num of embedding held in mem bf db update
 
     while db.get_news(filter).count():
@@ -124,8 +124,7 @@ def add_sentiment():
         inferred_result = sentModel.infer()
 
         logger.info(f'infer of {len(inferred_result)} news completed')
-        breakpoint()
-        # db.update_news(inferred_result)
+        db.update_news(inferred_result)
 
     logger.info("done")
 

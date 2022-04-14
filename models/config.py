@@ -6,5 +6,5 @@ fine_tuned_weight_path = "analyst_tone/fine_tuned.pth"      # this is fine-tuned
 max_seq_length=64
 
 # can change according to deployment's compute
-device='cuda'
-batch_size=128 # adjust based on available memory
+device='cpu'
+batch_size=8 # adjust based on available memory
