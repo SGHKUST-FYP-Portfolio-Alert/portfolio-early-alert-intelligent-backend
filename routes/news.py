@@ -12,6 +12,6 @@ def get_news(counterparty: str = None, skip: int = 0, limit: int = 30, date: str
     if counterparty is not None:
         news_filter['counterparty'] =  counterparty
     if date is not None:
-        news_filter['date'] = date
+        news_filter['date'] = { '$lte': date }
     return list(db.get_news(news_filter, skip=skip, limit=limit, sort=True))
     

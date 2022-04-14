@@ -62,4 +62,9 @@ def search_counterparties(query: str, new: boolean = False):
             for c in finnhub_client.symbol_lookup(query)['result']
         ]
     else:
-        return list(db.get_counterparties({'$text': {'$search': query}}))
+        return list(db.get_counterparties(
+            {'$or': [
+                {'name': {'$regex': query, '$options': 'i'}},
+                {'symbol': {'$regex': query, '$options': 'i'}}
+            ]}
+        ))
