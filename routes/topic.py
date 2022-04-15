@@ -43,7 +43,7 @@ Params:
 Returns:
     list of news dicts: [{'_id': str, headline': str, 'score': float}, ...]
 '''
-@router.get("/get_articles") #TODO: reponse model
+@router.get("/get_articles") #TODO: response model
 def get_topic_articles(sim_threshold: float, counterparty: str, date: str, title: str = None, id: str = None):
     if title is None and id is None:
         raise HTTPException(status_code=400, detail='Must provide either title or id')
@@ -89,7 +89,7 @@ def gen_topic_embed(topic: TopicCreate):
     embedding = [news['embedding'] for news in list(cur)]
     
     if len(embedding) <= 1:
-        logger.warning(f'Topic {topic["title"]} has less than 2 news matches')
+        logger.debug(f'Topic {topic["title"]} has less than 2 news matches')
         return False
 
     topic['embedding'] = np.mean(np.array(embedding), axis=0).tolist()
