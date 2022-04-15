@@ -24,7 +24,7 @@ def daily_ingest_external_data_cron():
 def daily_update_calculation_cron():
     logger.info("daily update calculation in progress")
     add_sentiment()
-    add_news_keyword_count()
+    #add_news_keyword_count()
     add_daily_aggregated_calculations()
     add_lda()
     logger.info("daily update calculation completed")
