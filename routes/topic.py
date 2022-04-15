@@ -112,10 +112,8 @@ def update_topic(topic: Topic):
     topic = jsonable_encoder(topic)
     topic['_id'] = ObjectId(topic['id'])
     del topic['id']
-    db.update_topic(topic)
-
+    # scorer.update_topic(topic)
 
 @router.delete("")
 def delete_topic(id: str):
-    id = ObjectId(id)
-    db.delete_topic(id)
+    scorer.delete_topic(id)

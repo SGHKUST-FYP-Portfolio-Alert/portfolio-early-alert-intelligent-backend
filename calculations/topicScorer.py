@@ -7,6 +7,7 @@ from schemas.topic import TopicCreate
 
 class topicScorer:
     def __init__(self):
+        self.ids = []
         self.titles = []
         self.embeddings = []
 
@@ -14,6 +15,7 @@ class topicScorer:
         filter = { 'embedding': {"$exists": True} }
         entries = { '_id': 0, 'title': 1, 'embedding': 1 }
         for entry in list(db.get_topics(filter=filter, projection=entries)):
+            self.ids.append(str(entry['_id']))
             self.titles.append(entry['title'])
             self.embeddings.append(entry['embedding'])
 
@@ -59,5 +61,16 @@ class topicScorer:
 
         db.add_topic(topic)
         return True
+
+    def update_topic(self, id):
+        pass
+        # db.update_topic(topic)
+
+    def delete_topic(self, id):
+        if db.delete_topic(id).acknowledged:
+            idx = self.ids.index(id)
+            self.ids.pop(idx)
+            self.titles.pop(idx)
+            self.embeddings.pop(idx)
 
 scorer = topicScorer()
