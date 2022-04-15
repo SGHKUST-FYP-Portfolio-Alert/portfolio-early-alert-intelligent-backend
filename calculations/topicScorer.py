@@ -13,7 +13,7 @@ class topicScorer:
 
         # fill in the embeddings and titles from db
         filter = { 'embedding': {"$exists": True} }
-        entries = { '_id': 0, 'title': 1, 'embedding': 1 }
+        entries = { '_id': 1, 'title': 1, 'embedding': 1 }
         for entry in list(db.get_topics(filter=filter, projection=entries)):
             self.ids.append(str(entry['_id']))
             self.titles.append(entry['title'])
