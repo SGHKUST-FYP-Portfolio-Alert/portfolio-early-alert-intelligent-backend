@@ -61,38 +61,80 @@ def aggregate_sentiments_daily():
     return output
 
 
+def aggregate_topic_count_daily():
+    sim_threshold = 0.6
 
-
-def aggregate_keywords_news_count_daily():
-
+    topics = db.database['topic'].find(projection={'title': 1})
     counterparties = [ 
         c['symbol'] for c in db.database['counterparty'].find(projection=['symbol'])
     ]
-    pipeline = [
-        { '$match': {'counterparty': {'$in': counterparties}, 'sentiment': {'$exists': True}}},
-        { '$addFields': {'keywords': {'$objectToArray': '$keyword_count'}} },
-        { '$unwind': '$keywords'},
+    
+    return db.database['news'].aggregate([
+        { '$match': {'counterparty': {'$in': counterparties}, 'topic_scores': {'$exists': True}}},
+        {'$project': 
+            { 'date': 1, 'counterparty': 1, 
+                'topic_count': { 
+                    t['title']: { '$cond': [{'$gt': [f"$topic_scores.{t['title']}", sim_threshold]}, 1 , '$$REMOVE']} for t in topics 
+                } 
+            }
+        },
+        {'$addFields': {'topics': {'$objectToArray': '$topic_count'}} },
+        { '$unwind': '$topics'},
         { '$group': {
             '_id': {
                 'counterparty': '$counterparty',
                 'date': '$date',
-                'k': "$keywords.k"
+                'k': "$topics.k"
             },
-            'v': {'$sum': 1},
+            'v': {'$sum': '$topics.v'},
         } },
         { '$group': {
             '_id': {
                 'counterparty': '$_id.counterparty',
                 'date': '$_id.date',
             },
-            'keywords': { '$push': {'k': "$_id.k", 'v': "$v"}},
+            'topics': { '$push': {'k': "$_id.k", 'v': "$v"}},
         }},
         { '$project': {
             '_id': 0,
             'counterparty': '$_id.counterparty',
             'date': '$_id.date',
-            'keyword_count': {'$arrayToObject': "$keywords"}
+            'topic_count': {'$arrayToObject': "$topics"}
         }}
-    ]
+        
+    ])
 
-    return db.aggregate_news(pipeline)
+
+# def aggregate_keywords_news_count_daily():
+
+#     counterparties = [ 
+#         c['symbol'] for c in db.database['counterparty'].find(projection=['symbol'])
+#     ]
+#     pipeline = [
+#         { '$match': {'counterparty': {'$in': counterparties}, 'sentiment': {'$exists': True}}},
+#         { '$addFields': {'keywords': {'$objectToArray': '$keyword_count'}} },
+#         { '$unwind': '$keywords'},
+#         { '$group': {
+#             '_id': {
+#                 'counterparty': '$counterparty',
+#                 'date': '$date',
+#                 'k': "$keywords.k"
+#             },
+#             'v': {'$sum': 1},
+#         } },
+#         { '$group': {
+#             '_id': {
+#                 'counterparty': '$_id.counterparty',
+#                 'date': '$_id.date',
+#             },
+#             'keywords': { '$push': {'k': "$_id.k", 'v': "$v"}},
+#         }},
+#         { '$project': {
+#             '_id': 0,
+#             'counterparty': '$_id.counterparty',
+#             'date': '$_id.date',
+#             'keyword_count': {'$arrayToObject': "$keywords"}
+#         }}
+#     ]
+
+#     return db.aggregate_news(pipeline)

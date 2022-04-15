@@ -4,8 +4,7 @@ from datetime import datetime, timedelta, timezone
 from pymongo.collection import ReturnDocument
 
 import models.config as modelConfig
-from calculations.aggregate import (aggregate_keywords_news_count_daily,
-                                    aggregate_sentiments_daily)
+from calculations.aggregate import aggregate_sentiments_daily, aggregate_topic_count_daily
 from calculations.topicScorer import scorer
 from database import database as db
 from ext_api import finnhub_wrapper, yahoo_finance
@@ -156,8 +155,8 @@ Aggregate news results of the same day
 def add_daily_aggregated_calculations():
     sentiments = aggregate_sentiments_daily()
     db.add_calculations(sentiments)
-    keywords = aggregate_keywords_news_count_daily()
-    db.add_calculations(keywords)
+    topics = aggregate_topic_count_daily()
+    db.add_calculations(topics)
 
 
 def add_lda():
