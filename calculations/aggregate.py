@@ -62,7 +62,7 @@ def aggregate_sentiments_daily():
 
 
 def aggregate_topic_count_daily():
-    sim_threshold = 0.6
+    sim_threshold = 0.7
 
     topics = db.database['topic'].find(projection={'title': 1})
     counterparties = [ 

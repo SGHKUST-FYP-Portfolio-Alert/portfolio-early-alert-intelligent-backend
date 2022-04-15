@@ -12,7 +12,8 @@ class News(BaseModel):
     api: Optional[str]
     sentiment: Optional[int]
     date: Optional[str]
-    keyword_count: Optional[dict]
+    #keyword_count: Optional[dict]
+    topic_scores: Optional[dict]
 
 
 
