@@ -7,4 +7,4 @@ max_seq_length=64
 
 # can change according to deployment's compute
 device='cpu'
-batch_size=8 # adjust based on available memory
+batch_size=8 # adjust based on available memory (64 for ~8GB vram)

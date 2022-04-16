@@ -54,16 +54,17 @@ class transformerInfer:
             # topic tagging stuff (using concat rn, could use mean for perf) 
             last_layer = outputs.hidden_states[-1].detach().cpu().numpy() #(batch_size, max_token_len, 768)
             last_layer = last_layer.reshape(last_layer.shape[0], -1) #(batch_size, max_token_len*768)
-            topic_scores = self.topicScorer.score(last_layer)
 
             # avg embedding (from word-based to sentence)
             embeddings = np.mean(last_layer.reshape(last_layer.shape[0], 768, -1), axis=2) #(batch_size, 768)
+            topic_scores = self.topicScorer.score(embeddings)
 
             sent = lambda i: self.class2sent_map[classifications[i]]
             result_list += [{'_id': data['_id'],
                             'v2': True,
                             'sentiment': sent(i), 
                             'topic_scores': topic_scores[i],
-                            'embedding': embeddings[i].tolist()} for i, data in enumerate(news)]
+                            'embedding': embeddings[i].tolist()
+                            } for i, data in enumerate(news)]
         
         return result_list
