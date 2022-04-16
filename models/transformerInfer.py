@@ -51,7 +51,7 @@ class transformerInfer:
             # 1d array of batch_size, each classified from 0 to 2
             classifications = np.argmax(outputs[0].detach().cpu().numpy(), axis=1)
             
-            # topic tagging stuff (using concat rn, could use mean for perf) 
+            # extract and reshape last layer
             last_layer = outputs.hidden_states[-1].detach().cpu().numpy() #(batch_size, max_token_len, 768)
             last_layer = last_layer.reshape(last_layer.shape[0], -1) #(batch_size, max_token_len*768)
 
