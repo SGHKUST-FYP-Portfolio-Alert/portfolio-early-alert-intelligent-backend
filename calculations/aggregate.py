@@ -1,5 +1,6 @@
 from database import database as db
 from calculations.alertGenerator import alertGenerator
+from itertools import chain
 
 def weighted_rolling_average(avgs: list, weights: list, decay=0.8):
 
@@ -64,45 +65,45 @@ def aggregate_sentiments_daily():
 def aggregate_topic_count_daily():
     sim_threshold = 0.7
 
-    topics = db.database['topic'].find(projection={'title': 1})
+    topics = list(db.database['topic'].find(projection={'title': 1}))
     counterparties = [ 
         c['symbol'] for c in db.database['counterparty'].find(projection=['symbol'])
     ]
     
-    return db.database['news'].aggregate([
-        { '$match': {'counterparty': {'$in': counterparties}, 'topic_scores': {'$exists': True}}},
-        {'$project': 
-            { 'date': 1, 'counterparty': 1, 
-                'topic_count': { 
-                    t['title']: { '$cond': [{'$gt': [f"$topic_scores.{t['title']}", sim_threshold]}, 1 , '$$REMOVE']} for t in topics 
-                } 
-            }
-        },
-        {'$addFields': {'topics': {'$objectToArray': '$topic_count'}} },
-        { '$unwind': '$topics'},
-        { '$group': {
-            '_id': {
-                'counterparty': '$counterparty',
-                'date': '$date',
-                'k': "$topics.k"
+    queries = []
+    
+    for counterparty in counterparties:
+        queries.append(db.database['news'].aggregate([
+            { '$match': {'counterparty': counterparty, 'topic_scores': {'$exists': True}}},
+            {'$project': 
+                { 'date': 1,
+                    'topic_count': { 
+                        t['title']: { '$cond': [{'$gt': [f"$topic_scores.{t['title']}", sim_threshold]}, 1 , '$$REMOVE']} for t in topics 
+                    } 
+                }
             },
-            'v': {'$sum': '$topics.v'},
-        } },
-        { '$group': {
-            '_id': {
-                'counterparty': '$_id.counterparty',
-                'date': '$_id.date',
-            },
-            'topics': { '$push': {'k': "$_id.k", 'v': "$v"}},
-        }},
-        { '$project': {
-            '_id': 0,
-            'counterparty': '$_id.counterparty',
-            'date': '$_id.date',
-            'topic_count': {'$arrayToObject': "$topics"}
-        }}
-        
-    ])
+            {'$addFields': {'topics': {'$objectToArray': '$topic_count'}} },
+            { '$unwind': '$topics'},
+            { '$group': {
+                '_id': {
+                    'date': '$date',
+                    'k': "$topics.k"
+                },
+                'v': {'$sum': '$topics.v'},
+            } },
+            { '$group': {
+                '_id': '$_id.date',
+                'topics': { '$push': {'k': "$_id.k", 'v': "$v"}},
+            }},
+            { '$project': {
+                '_id': 0,
+                'counterparty': counterparty,
+                'date': '$_id',
+                'topic_count': {'$arrayToObject': "$topics"}
+            }}
+
+        ]))
+    return chain(*queries)
 
 
 # def aggregate_keywords_news_count_daily():
