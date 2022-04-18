@@ -4,7 +4,6 @@ import numpy as np
 from transformers import BertForSequenceClassification, BertTokenizer
 
 import utils
-from database import database as db
 from calculations.topicScorer import topicScorer
 
 class transformerInfer:
