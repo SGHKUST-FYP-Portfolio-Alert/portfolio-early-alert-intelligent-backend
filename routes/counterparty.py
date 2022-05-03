@@ -6,6 +6,7 @@ from database import database as db
 from schemas.counterparty import CounterpartyCreate, Counterparty, CounterpartyBase
 from typing import List
 from ext_api.finnhub_wrapper import finnhub_client
+import requests
 
 router = APIRouter()
 
@@ -57,10 +58,19 @@ def delete_counterparty(symbol: str):
 @router.get("/search", response_model=List[CounterpartyBase])
 def search_counterparties(query: str, new: boolean = False):
     if new:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:99.0) Gecko/20100101 Firefox/99.0'
+        }
+        url = f'https://query2.finance.yahoo.com/v1/finance/search?q={query}&quotesCount=4&newsCount=0&listsCount=0'
+        r = requests.get(url, headers=headers)
         return [
-            {'symbol': c['symbol'], 'name': c['description']}
-            for c in finnhub_client.symbol_lookup(query)['result']
+            {'symbol': c['symbol'], 'name': c['shortname']}
+            for c in r.json()['quotes'] if c['quoteType'] == "EQUITY"
         ]
+        # return [
+        #     {'symbol': c['symbol'], 'name': c['description']}
+        #     for c in finnhub_client.symbol_lookup(query)['result']
+        # ]
     else:
         return list(db.get_counterparties(
             {'$or': [
