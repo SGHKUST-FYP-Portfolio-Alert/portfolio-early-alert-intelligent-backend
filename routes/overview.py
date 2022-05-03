@@ -38,7 +38,7 @@ def get_overview(date: str = None):
         {'$match': filter},
         {'$group': {'_id': '$date', 'sentiment': {'$avg': '$sentiments.rolling_avg'} }},
         {'$sort': {'_id': -1}},
-        {'$limit': 300},
+        {'$limit': 400},
         {'$project': {'_id': False, 'date': '$_id', 'sentiment': 1} }
     ])
     
