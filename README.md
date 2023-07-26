@@ -9,7 +9,7 @@ python -m pip install -r requirements.txt
 python run.py
 
 ### Implementation Goal ###
-store the fetched news to mongodb
+~~store the fetched news to mongodb~~
 
 ### Project Structure Template ###
 https://github.com/Youngestdev/fastapi-mongo
@@ -24,7 +24,6 @@ unzip it and put the folder inside the portfolio-early-alert-intelligent-backend
 
 
 ### Server info:
-ssh root@178.128.29.144
-password: ***
+ssh 178.128.29.144
 
 project directory: /root/fyp/
