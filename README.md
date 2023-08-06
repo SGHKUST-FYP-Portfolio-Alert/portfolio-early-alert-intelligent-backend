@@ -1,6 +1,9 @@
 ### Live site:
 https://fyp.cslix1.ml/
 
+### Product "planning" notion
+https://www.notion.so/invite/76e7e0b87069d526ed134fc12e4c4d216c5b5fd8
+
 ### Running instructions:
 
 python version 3.8.x
